@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/my_home"
+            android:icon="@mipmap/ic_dashboard_white_24dp"
+            android:title="Home" />
+        <item
+            android:id="@+id/setting"
+            android:icon="@drawable/ic_setting"
+            android:title="setting" />
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_about"
+            android:title="about" />
+
+        <item
+            android:id="@+id/action_other"
+            android:checked="false"
+            android:title="其他操作">
+
+            <item
+                android:id="@+id/action_qq"
+                android:checked="false"
+                android:icon="@android:drawable/ic_btn_speak_now"
+                android:title="QQ好友" />
+
+            <item
+                android:id="@+id/action_weixin"
+                android:checked="false"
+                android:icon="@android:drawable/ic_dialog_alert"
+                android:title="微信好友" />
+        </item>
+    </group>
+
+</menu>

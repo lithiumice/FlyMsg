@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IPmsg</string>
+    <string name="file_path">当前路径</string>
+    <string name="file_title">选择文件</string>
+    <string name="info">0用户在线</string>
+    <string name="no_wifi">无WiFi连接</string>
+    <string name="default_device_name">android feige</string>
+    <string name="default_device_group">android</string>
+    <string name="default_ip_address">IP: 127.0.0.1</string>
+</resources>

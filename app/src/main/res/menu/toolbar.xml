@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/setting"
+        android:icon="@drawable/ic_setting"
+        android:title="setting"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/about"
+        android:icon="@drawable/ic_about"
+        android:title="about"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/welcome"
+        android:icon="@drawable/ic_welcome"
+        android:title="welcome"
+        app:showAsAction="never"/>
+
+
+</menu>
