@@ -1,4 +1,4 @@
-package com.tobibur.mychatkit;
+package online.hualin.ipmsg.utils;
 
 import android.util.Log;
 

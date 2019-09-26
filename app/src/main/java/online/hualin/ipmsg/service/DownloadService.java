@@ -1,4 +1,4 @@
-package online.hualin.ipmsg.utils;
+package online.hualin.ipmsg.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,6 +18,7 @@ import java.io.File;
 import online.hualin.ipmsg.R;
 import online.hualin.ipmsg.activity.MyFeiGeActivity;
 import online.hualin.ipmsg.interfaces.DownloadListener;
+import online.hualin.ipmsg.utils.DownloadTask;
 
 public class DownloadService extends Service {
 
@@ -118,8 +119,6 @@ public class DownloadService extends Service {
         Intent intent = new Intent(this, MyFeiGeActivity.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         builder.setContentIntent(pi);
         builder.setContentTitle(title);
         if (progress >= 0) {

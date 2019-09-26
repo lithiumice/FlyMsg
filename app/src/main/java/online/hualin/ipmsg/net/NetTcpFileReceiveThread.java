@@ -10,6 +10,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import android.nfc.Tag;
+import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
 
@@ -17,6 +19,7 @@ import online.hualin.ipmsg.R;
 import online.hualin.ipmsg.activity.MyFeiGeBaseActivity;
 import online.hualin.ipmsg.utils.IpMessageConst;
 import online.hualin.ipmsg.utils.IpMessageProtocol;
+import online.hualin.ipmsg.utils.MyApplication;
 import online.hualin.ipmsg.utils.UsedConst;
 
 public class NetTcpFileReceiveThread implements Runnable {
@@ -25,7 +28,8 @@ public class NetTcpFileReceiveThread implements Runnable {
 	private String[] fileInfos;	//文件信息字符数组
 	private String senderIp;
 	private long packetNo;	//包编号
-	private String savePath;	//文件保存路径
+	private File savePath;	//文件保存路径
+	private File saveDir; //
 
 	private String selfName;
 	private String selfGroup;
@@ -44,15 +48,13 @@ public class NetTcpFileReceiveThread implements Runnable {
 //		selfName = getContext().getString(R.string.default_device_name);
 //		selfGroup = getApplicationContext().getString(R.string.default_device_group);
 
-		selfName="android";
-		selfGroup="android feige";
-		savePath= "/mnt/sdcard/FeigeRec/";
+		selfName= MyApplication.getContext().getString(R.string.default_device_name);
+		selfGroup=MyApplication.getContext().getString(R.string.default_device_group);
+//		savePath= "/mnt/sdcard/FeigeRec/";
+		savePath= Environment.getExternalStorageDirectory().getAbsoluteFile();
+		saveDir=new File(savePath+"/FlyMsg/");
+		saveDir.mkdir();
 
-		//判断接收文件的文件夹是否存在，若不存在，则创建
-		File fileDir = new File(savePath);
-		if( !fileDir.exists()){	//若不存在
-			fileDir.mkdir();
-		}
 
 	}
 	@Override
@@ -85,11 +87,14 @@ public class NetTcpFileReceiveThread implements Runnable {
 
 
 				//接收文件
-				File receiveFile = new File(savePath + fileInfo[1]);
+				File receiveFile = new File(saveDir + fileInfo[1]);
+				Log.d(TAG,"Save dir:"+saveDir + fileInfo[1]);
 				if(receiveFile.exists()){	//若对应文件名的文件已存在，则删除原来的文件
 					receiveFile.delete();
 				}
+
 				fbos = new BufferedOutputStream(new FileOutputStream(receiveFile));
+//				fbos = new BufferedOutputStream(new FileOutputStream(receiveFile));
 				Log.d(TAG, "准备开始接收文件....");
 				bis = new BufferedInputStream(socket.getInputStream());
 				int len = 0;
@@ -98,6 +103,7 @@ public class NetTcpFileReceiveThread implements Runnable {
 				int temp = 0;
 				while((len = bis.read(readBuffer)) != -1){
 					fbos.write(readBuffer, 0, len);
+//					fbos.write(readBuffer, 0, len);
 					fbos.flush();
 
 					sended += len;	//已接收文件大小
@@ -124,18 +130,25 @@ public class NetTcpFileReceiveThread implements Runnable {
 
 				e.printStackTrace();
 				Log.e(TAG, "....系统不支持GBK编码");
+				sendFailMsg();
 			} catch (UnknownHostException e) {
 
 				e.printStackTrace();
 				Log.e(TAG, "远程IP地址错误");
+				sendFailMsg();
+
 			} catch (FileNotFoundException e) {
 
 				e.printStackTrace();
 				Log.e(TAG, "文件创建失败");
+				sendFailMsg();
+
 			}catch (IOException e) {
 
 				e.printStackTrace();
 				Log.e(TAG, "发生IO错误");
+				sendFailMsg();
+
 			}finally{	//处理
 
 				if(bos != null){
@@ -186,4 +199,9 @@ public class NetTcpFileReceiveThread implements Runnable {
 
 	}
 
+	public void sendFailMsg(){
+		Message msgFail=new Message();
+		msgFail.what=UsedConst.FILERECEIVEFAIL;
+		MyFeiGeBaseActivity.sendMessage(msgFail);
+	}
 }

@@ -36,13 +36,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         TextView childInfos;
         TextView childName;
         TextView childIp;
+        TextView groupName;
 
 
         public ViewHolder(View view) {
             super(view);
             cardView = (CardView) view;
             userImage = (ImageView) view.findViewById(R.id.user_img);
-            childInfos = (TextView) view.findViewById(R.id.child_infos);
+            groupName=view.findViewById(R.id.group_name);
+            childInfos = (TextView) view.findViewById(R.id.unread_count);
             childName = (TextView) view.findViewById(R.id.child_name);
             childIp = (TextView) view.findViewById(R.id.child_ip);
         }
@@ -68,7 +70,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
                 Intent intent = new Intent();
                 intent.setClass(mContext, MyFeiGeChatActivity.class);
-                intent.putExtra("receiverName", user.getUserName());
+                intent.putExtra("receiverName", user.getName());
                 intent.putExtra("receiverIp", user.getIp());
                 intent.putExtra("receiverGroup", user.getGroupName());
 
@@ -84,7 +86,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         holder.userImage.setImageDrawable(res.getDrawable(R.drawable.profile));
         holder.childIp.setText(user.getIp());
         holder.childInfos.setText(user.getMsgCount()+"");
-        holder.childName.setText(user.getUserName());
+        holder.childName.setText(user.getName());
+        holder.groupName.setText(user.getGroupName());
     }
 
     @Override

@@ -1,5 +1,8 @@
 package online.hualin.ipmsg.net;
 
+import com.stfalcon.chatkit.commons.ImageLoader;
+import com.stfalcon.chatkit.commons.models.IMessage;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
@@ -14,9 +17,14 @@ import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import android.content.res.Resources;
 import android.os.Message;
+import android.service.autofill.UserData;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
+import online.hualin.ipmsg.R;
 import online.hualin.ipmsg.activity.MyFeiGeActivity;
 import online.hualin.ipmsg.activity.MyFeiGeBaseActivity;
 import online.hualin.ipmsg.data.ChatMessage;
@@ -24,6 +32,8 @@ import online.hualin.ipmsg.data.User;
 import online.hualin.ipmsg.interfaces.ReceiveMsgListener;
 import online.hualin.ipmsg.utils.IpMessageConst;
 import online.hualin.ipmsg.utils.IpMessageProtocol;
+import online.hualin.ipmsg.utils.MyApplication;
+import online.hualin.ipmsg.utils.UsedConst;
 
 /**
  * 飞鸽的网络通信辅助类
@@ -35,38 +45,34 @@ import online.hualin.ipmsg.utils.IpMessageProtocol;
 
 public class NetThreadHelper implements Runnable{
 	public static final String TAG = "NetThreadHelper";
-//	final public static String sendStr;
-//	final InetAddress sendto;
-//	final int sendPort;
-
+	public static String sendStr;
+	public InetAddress sendto;
+	public int sendPort;
 	private static NetThreadHelper instance;
-
 	private static final int BUFFERLENGTH = 1024; //缓冲大小
 	private boolean onWork = false;	//线程工作标识
 	private String selfName;
 	private String selfGroup;
-
 	private Thread udpThread = null;	//接收UDP数据线程
 	private DatagramSocket udpSocket = null;	//用于接收和发送udp数据的socket
 	private DatagramPacket udpSendPacket = null;	//用于发送的udp数据包
 	private DatagramPacket udpResPacket = null;	//用于接收的udp数据包
 	private byte[] resBuffer = new byte[BUFFERLENGTH];	//接收数据的缓存
 	private byte[] sendBuffer = null;
-
 	private Map<String,User> users;	//当前所有用户的集合，以IP为KEY
 	private int userCount = 0; //用户个数。注意，此项值只有在调用getSimpleExpandableListAdapter()才会更新，目的是与adapter中用户个数保持一致
-
 	private Queue<ChatMessage> receiveMsgQueue;	//消息队列,在没有聊天窗口时将接收的消息放到这个队列中
 	private Vector<ReceiveMsgListener> listeners;	//ReceiveMsgListener容器，当一个聊天窗口打开时，将其加入。一定要记得适时将其移除
+
+	private Resources res;
 
 	private NetThreadHelper(){
 		users = new HashMap<String, User>();
 		receiveMsgQueue = new ConcurrentLinkedQueue<ChatMessage>();
 		listeners = new Vector<ReceiveMsgListener>();
-
-		selfName = "android feige";
-		selfGroup="android";
-//		selfGroup = getApplicationContext().getString(R.string.default_device_group);
+		res=MyApplication.getContext().getResources();
+		selfName = res.getString(R.string.default_device_name);
+		selfGroup=res.getString(R.string.default_device_group);
 	}
 
 	private NetThreadHelper(String name,String group){
@@ -206,6 +212,15 @@ public class NetThreadHelper implements Runnable{
 				e.printStackTrace();
 				Log.e(TAG, "接收数据时，系统不支持GBK编码");
 			}//截取收到的数据
+
+//			try {
+//				byte[] ptext=ipmsgStr.getBytes("UTF-8");
+//				String encodeStr=new String(ptext,"UTF-8");
+//				Log.i(TAG, "接收到的UDP数据内容encode:" + encodeStr);
+//
+//			}catch (IOException e){
+//			}
+
 			Log.i(TAG, "接收到的UDP数据内容为:" + ipmsgStr);
 			IpMessageProtocol ipmsgPro = new IpMessageProtocol(ipmsgStr);	//
 			int commandNo = ipmsgPro.getCommandNo();
@@ -288,7 +303,8 @@ public class NetThreadHelper implements Runnable{
 					msgStr = msgTemp;
 
 					// 若只是发送消息，处理消息
-					ChatMessage msg = new ChatMessage(senderIp, senderName, msgStr, time);
+					User user = new User(senderName,"",senderIp);
+					ChatMessage msg = new ChatMessage(senderIp, senderName, msgStr, new Date(),user);
 					if(!receiveMsg(msg)){	//没有聊天窗口对应的activity
 						receiveMsgQueue.add(msg);	// 添加到信息队列
 						MyFeiGeBaseActivity.playMsg();
@@ -374,15 +390,6 @@ public class NetThreadHelper implements Runnable{
 		}
 	}
 
-//	final public void sendUdpData(String sendStr, InetAddress sendto, int sendPort){
-//		new Thread(new Runnable() {
-//			@Override
-//			final public void run() {
-//				sendUdpDataNoThread(sendStr, sendto, sendPort);
-//			}
-//		}).start();
-//	}
-
 	public void sendUdpData(String sendStr, InetAddress sendto, int sendPort){	//发送UDP数据包的方法
 		try {
 			sendBuffer = sendStr.getBytes("gbk");
@@ -400,12 +407,18 @@ public class NetThreadHelper implements Runnable{
 
 			e.printStackTrace();
 			udpSendPacket = null;
+//			String failMsg="udp fail";
+//			EventBus.getDefault().post(failMsg);
+			Message msg=new Message();
+			msg.what= UsedConst.UDPPORTFAIL;
+			MyFeiGeBaseActivity.sendMessage(msg);
 			Log.e(TAG, "sendUdpData(String sendStr, int port)....发送UDP数据包失败");
 		}
 	}
 
 	private synchronized void addUser(IpMessageProtocol ipmsgPro){ //添加用户到Users的Map中
 		String userIp = udpResPacket.getAddress().getHostAddress();
+//		String userMac = udpResPacket.getAddress().get;
 		User user = new User();
 //		user.setUserName(ipmsgPro.getSenderName());
 		user.setAlias(ipmsgPro.getSenderName());	//别名暂定发送者名称
@@ -413,19 +426,19 @@ public class NetThreadHelper implements Runnable{
 		String extraInfo = ipmsgPro.getAdditionalSection();
 		String[] userInfo = extraInfo.split("\0");	//对附加信息进行分割,得到用户名和分组名
 		if(userInfo.length < 1){
-			user.setUserName(ipmsgPro.getSenderName());
+			user.setName(ipmsgPro.getSenderName());
 			if(userIp.equals(MyFeiGeActivity.hostIp))
 				user.setGroupName("自己");
 			else
 				user.setGroupName("未分组");
 		}else if (userInfo.length == 1){
-			user.setUserName(userInfo[0]);
+			user.setName(userInfo[0]);
 			if(userIp.equals(MyFeiGeActivity.hostIp))
 				user.setGroupName("自己");
 			else
 				user.setGroupName("未分组");
 		}else{
-			user.setUserName(userInfo[0]);
+			user.setName(userInfo[0]);
 			if(userIp.equals(MyFeiGeActivity.hostIp))
 				user.setGroupName("自己");
 			else

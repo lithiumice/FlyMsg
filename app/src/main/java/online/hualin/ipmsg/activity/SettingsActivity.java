@@ -1,10 +1,12 @@
-package online.hualin.ipmsg;
+package online.hualin.ipmsg.activity;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+
+import online.hualin.ipmsg.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

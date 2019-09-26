@@ -3,7 +3,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/my_home"
-            android:icon="@mipmap/ic_dashboard_white_24dp"
+            android:icon="@drawable/ic_comment"
             android:title="Home" />
         <item
             android:id="@+id/setting"
@@ -13,23 +13,22 @@
             android:id="@+id/about"
             android:icon="@drawable/ic_about"
             android:title="about" />
+        <item
+            android:id="@+id/change_skin"
+            android:icon="@drawable/ic_welcome"
+            android:title="night" />
 
         <item
             android:id="@+id/action_other"
             android:checked="false"
-            android:title="其他操作">
+            android:title="Share">
 
             <item
                 android:id="@+id/action_qq"
                 android:checked="false"
-                android:icon="@android:drawable/ic_btn_speak_now"
-                android:title="QQ好友" />
+                android:icon="@drawable/ic_bird"
+                android:title="QQ" />
 
-            <item
-                android:id="@+id/action_weixin"
-                android:checked="false"
-                android:icon="@android:drawable/ic_dialog_alert"
-                android:title="微信好友" />
         </item>
     </group>
 

@@ -1,4 +1,5 @@
 package online.hualin.ipmsg.interfaces;
 
-public class FragActivityMsg {
+public interface FragActivityMsg {
+    public void tranMsg(int i);
 }

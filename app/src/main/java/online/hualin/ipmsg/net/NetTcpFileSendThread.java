@@ -87,7 +87,7 @@ public class NetTcpFileSendThread implements Runnable{
 				}
 				
 				if(i == (filePathArray.length -1)){
-					MyFeiGeBaseActivity.sendEmptyMessage(UsedConst.FILESENDSUCCESS);	//�ļ����ͳɹ�
+					MyFeiGeBaseActivity.sendEmptyMessage(UsedConst.FILESENDSUCCESS);
 				}
 				
 			}catch (UnsupportedEncodingException e) {

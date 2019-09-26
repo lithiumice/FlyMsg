@@ -11,6 +11,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/logo_big"/>
+            android:src="@drawable/ic_bird"/>
     </item>
 </layer-list>

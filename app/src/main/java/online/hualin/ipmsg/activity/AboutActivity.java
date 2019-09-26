@@ -1,78 +1,221 @@
 package online.hualin.ipmsg.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.danielstone.materialaboutlibrary.MaterialAboutActivity;
 import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem;
+import com.danielstone.materialaboutlibrary.items.MaterialAboutItemOnClickAction;
+import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList;
+
+import online.hualin.ipmsg.BuildConfig;
+import online.hualin.ipmsg.R;
+
 //import com.vansuita.materialabout.builder.AboutBuilder;
 //import com.vansuita.materialabout.views.AboutView;
 
-import online.hualin.ipmsg.R;
+/**
+ * Created by ThirtyDegreesRay on 2017/8/29.
+ */
 
 public class AboutActivity extends MaterialAboutActivity {
-    private boolean isAlive=false;
 
     public static void show(@NonNull Context context){
-        Intent intent=new Intent(context,AboutActivity.class);
+        Intent intent = new Intent(context, AboutActivity.class);
         context.startActivity(intent);
     }
 
+    private boolean isAlive = false;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        isAlive = true;
+//        ThemeHelper.applyForAboutActivity(this);
         super.onCreate(savedInstanceState);
-        isAlive=true;
-//        setContentView(R.layout.activity_about);
-//        AboutView view = AboutBuilder.with(this)
-//                .setPhoto(R.mipmap.profile_picture)
-//                .setCover(R.mipmap.profile_cover)
-//                .setName("Your Full Name")
-//                .setSubTitle("Mobile Developer")
-//                .setBrief("I'm warmed of mobile technologies. Ideas maker, curious and nature lover.")
-//                .setAppIcon(R.mipmap.ic_launcher)
-//                .setAppName(R.string.app_name)
-//                .addGooglePlayStoreLink("8002078663318221363")
-//                .addGitHubLink("user")
-//                .addFacebookLink("user")
-//                .addFiveStarsAction()
-//                .setVersionNameAsAppSubTitle()
-//                .addShareAction(R.string.app_name)
-//                .setWrapScrollView(true)
-//                .setLinksAnimated(true)
-//                .setShowAsCard(true)
-//                .build();
-//
-//        addContentView(view, null);
-//    }
+//        UpgradeDialog.INSTANCE.setShowDialogActivity(this);
     }
 
-
-    @Override
     @NonNull
+    @Override
     protected MaterialAboutList getMaterialAboutList(@NonNull Context context) {
-        MaterialAboutCard card=new MaterialAboutCard.Builder()
-                .title("IPmsg")
-                .addItem(new MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_about)
-                        .text("Version")
-                        .build())
-                .build();
-//        MaterialAboutCard card2=new MaterialAboutCard.Builder();
-
-        return new MaterialAboutList.Builder()
-                .addCard(card)
-//                .addCard(card2)
-                .build(); // This creates an empty screen, add cards with .addCard()
+        MaterialAboutCard.Builder appBuilder = new MaterialAboutCard.Builder();
+        buildApp(appBuilder, context);
+        MaterialAboutCard.Builder authorBuilder = new MaterialAboutCard.Builder();
+        buildAuthor(authorBuilder, context);
+        MaterialAboutCard.Builder shareBuilder = new MaterialAboutCard.Builder();
+        buildShare(shareBuilder, context);
+        return new MaterialAboutList(appBuilder.build(), authorBuilder.build(), shareBuilder.build());
     }
 
+    @Nullable
     @Override
     protected CharSequence getActivityTitle() {
-        return getString(R.string.mal_title_about);
+        return getString(R.string.app_name);
     }
+
+    private void buildApp(MaterialAboutCard.Builder appBuilder, final Context context){
+        appBuilder.addItem(new MaterialAboutTitleItem.Builder()
+                .text(getString(R.string.app_github_name))
+                .desc(getString(R.string.app_copyright))
+                .icon(R.drawable.ic_bird)
+                .build());
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.version)
+                .subText(BuildConfig.VERSION_NAME)
+                .icon(R.drawable.ic_menu_about)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        Beta.checkUpgrade(true, true);
+                    }
+                })
+                .build());
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.source_code)
+                .subText(R.string.source_code_wishes)
+                .icon(R.drawable.ic_code)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        RepositoryActivity.show(context, getString(R.string.author_login_id), getString(R.string.app_github_name));
+                    }
+                })
+                .build());
+    }
+
+    private void buildAuthor(MaterialAboutCard.Builder appBuilder, final Context context){
+        appBuilder.title(R.string.author);
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.author_name)
+                .subText(R.string.author_location)
+                .icon(R.drawable.ic_menu_person)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        ProfileActivity.show(AboutActivity.this, getString(R.string.author_login_id),
+//                                getString(R.string.author_avatar_url));
+                    }
+                })
+                .build());
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.follow_on_github)
+                .icon(R.drawable.ic_github)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        ProfileActivity.show(AboutActivity.this, getString(R.string.author_login_id),
+//                                getString(R.string.author_avatar_url));
+                    }
+                })
+                .build());
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.email)
+                .subText(R.string.auth_email_address)
+                .icon(R.drawable.ic_mail)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        AppOpener.launchEmail(context, getString(R.string.auth_email_address));
+                    }
+                })
+                .setOnLongClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        AppUtils.copyToClipboard(context, getString(R.string.auth_email_address));
+                    }
+                })
+                .build());
+    }
+
+    private void buildShare(MaterialAboutCard.Builder appBuilder, final Context context) {
+        appBuilder.title(R.string.share_to_friends);
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.share_to_friends)
+                .icon(R.drawable.ic_share)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        AppOpener.shareText(AboutActivity.this, getString(R.string.cookapk_download_url));
+                    }
+                })
+                .build());
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.rate_in_market)
+                .icon(R.drawable.ic_menu_star)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        AppOpener.openInMarket(context);
+                    }
+                })
+                .build());
+        appBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text(R.string.feedback)
+                .icon(R.drawable.ic_feedback)
+                .setOnClickAction(new MaterialAboutItemOnClickAction() {
+                    @Override
+                    public void onClick() {
+//                        IssuesActivity.showForRepo(AboutActivity.this,
+//                                getString(R.string.author_login_id), getString(R.string.app_name));
+                    }
+                })
+                .build());
+    }
+
+    @Override
+    protected void onDestroy() {
+        isAlive = false;
+//        UpgradeDialog.INSTANCE.setShowDialogActivity(null);
+        super.onDestroy();
+    }
+
 }
+
+//public class AboutActivity extends MaterialAboutActivity {
+//    private boolean isAlive=false;
+//
+//    public static void show(@NonNull Context context){
+//        Intent intent=new Intent(context,AboutActivity.class);
+//        context.startActivity(intent);
+//    }
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        isAlive=true;
+//    }
+//
+//
+//    @Override
+//    @NonNull
+//    protected MaterialAboutList getMaterialAboutList(@NonNull Context context) {
+//        MaterialAboutCard card=new MaterialAboutCard.Builder()
+//                .title("IPmsg")
+//                .addItem(new MaterialAboutActionItem.Builder()
+//                        .icon(R.drawable.ic_about)
+//                        .text("Version")
+//                        .build())
+//                .addItem(new MaterialAboutActionItem.Builder()
+//                        .icon(R.drawable.ic_about)
+//                        .text("Version")
+//                        .build())
+//                .build();
+////        MaterialAboutCard card2=new MaterialAboutCard.Builder();
+//
+//        return new MaterialAboutList.Builder()
+//                .addCard(card)
+////                .addCard(card2)
+//                .build(); // This creates an empty screen, add cards with .addCard()
+//    }
+//
+//    @Override
+//    protected CharSequence getActivityTitle() {
+//        return getString(R.string.mal_title_about);
+//    }
+//}

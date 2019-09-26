@@ -3,11 +3,15 @@ package online.hualin.ipmsg.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceFragmentCompat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import online.hualin.ipmsg.R;
 
 /**
@@ -17,9 +21,8 @@ import online.hualin.ipmsg.R;
  * to handle interaction events.
  * Use the {@link SettingFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
-public class SettingFragment extends Fragment {
+public class SettingFragment extends PreferenceFragmentCompat {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,6 +33,10 @@ public class SettingFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    public SettingFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -48,17 +55,20 @@ public class SettingFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    public SettingFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.root_preferences);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
     }
 
     @Override

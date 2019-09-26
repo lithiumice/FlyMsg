@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/send_file"
+        android:icon="@drawable/ic_send_black"
+        android:iconTint="@color/textIcon"
+        android:title="setting"
+        app:showAsAction="always"/>
+    <item android:id="@+id/clear_msg"
+        android:icon="@drawable/ic_delete"
+        android:title="clear"
+        app:showAsAction="always"/>
 
 </menu>
