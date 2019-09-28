@@ -4,7 +4,7 @@
 
     <item android:id="@+id/send_file"
         android:icon="@drawable/ic_send_black"
-        android:iconTint="@color/textIcon"
+        android:iconTint="@color/white"
         android:title="setting"
         app:showAsAction="always"/>
     <item android:id="@+id/clear_msg"

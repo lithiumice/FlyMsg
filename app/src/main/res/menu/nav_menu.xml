@@ -7,15 +7,15 @@
             android:title="Home" />
         <item
             android:id="@+id/setting"
-            android:icon="@drawable/ic_setting"
+            android:icon="@drawable/ic_settings_white_24dp"
             android:title="setting" />
         <item
             android:id="@+id/about"
-            android:icon="@drawable/ic_about"
+            android:icon="@drawable/ic_about_white_24dp"
             android:title="about" />
         <item
             android:id="@+id/change_skin"
-            android:icon="@drawable/ic_welcome"
+            android:icon="@drawable/ic_comment"
             android:title="night" />
 
         <item
@@ -26,10 +26,11 @@
             <item
                 android:id="@+id/action_qq"
                 android:checked="false"
-                android:icon="@drawable/ic_bird"
+                android:icon="@drawable/ic_bird_f"
                 android:title="QQ" />
 
         </item>
+
     </group>
 
 </menu>

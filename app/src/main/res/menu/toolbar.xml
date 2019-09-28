@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/setting"
-        android:icon="@drawable/ic_setting"
+        android:icon="@drawable/ic_settings_white_24dp"
         android:title="setting"
         app:showAsAction="never"/>
 
     <item android:id="@+id/about"
-        android:icon="@drawable/ic_about"
+        android:icon="@drawable/ic_about_white_24dp"
         android:title="about"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/welcome"
-        android:icon="@drawable/ic_welcome"
-        android:title="welcome"
+    <item android:id="@+id/intro"
+        android:icon="@drawable/ic_comment"
+        android:title="intro"
         app:showAsAction="never"/>
 
 

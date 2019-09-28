@@ -11,6 +11,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ic_bird"/>
+            android:src="@drawable/ic_bird_f"/>
     </item>
 </layer-list>

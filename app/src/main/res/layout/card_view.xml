@@ -5,23 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@color/colorPrimary"
-    app:cardCornerRadius="5dp">
+    app:cardCornerRadius="5dp"
+    android:background="@drawable/linerlayout_water_selector"
+    android:clickable="true"
+    android:focusable="true"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="102dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/user_img"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerInParent="true"
-            android:layout_margin="6dp"
-            android:contentDescription="USER IMG"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_image"
+            android:layout_width="87dp"
+            android:layout_height="86dp"
+            android:layout_margin="15dp"
+            android:src="@drawable/profile"
+            app:civ_border_color="@color/colorPrimaryDark"
+            app:civ_border_width="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,64 +35,97 @@
             android:id="@+id/unread_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="183dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="12dp"
             android:text="0"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="25dp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.86"
-            app:layout_constraintStart_toEndOf="@+id/child_ip"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.836" />
 
         <TextView
             android:id="@+id/child_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="76dp"
             android:text="@string/default_device_name"
             android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.089"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/child_ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/default_ip_address"
-            android:textColor="@color/darkgray"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.052"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.243"
+            app:layout_constraintStart_toEndOf="@+id/group_name"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.745" />
+            app:layout_constraintVertical_bias="0.303" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="112dp" />
+            app:layout_constraintGuide_begin="120dp" />
 
         <TextView
             android:id="@+id/group_name"
-            android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/default_device_group"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.047"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.311" />
+
+        <TextView
+            android:id="@+id/unread_msg"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:text="未读消息..."
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHorizontal_bias="0.083"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.826" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="375dp" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/colorPrimaryDark"
+            android:outlineAmbientShadowColor="@color/colorPrimaryDark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/user_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.49" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

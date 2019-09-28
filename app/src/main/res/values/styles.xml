@@ -2,15 +2,18 @@
 
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:windowAnimationStyle">@style/fade</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
 
+        <item name="android:windowTranslucentStatus">true</item>    <!--状态栏为透明,如果设置为false，则没有黑色条盖住，见下图对比-->
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:textSize">15dp</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
 
     </style>
@@ -21,7 +24,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:windowAnimationStyle">@style/fade</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+
         <item name="windowActionBar">false</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
 
@@ -30,11 +34,50 @@
     <style name="OverflowButtonStyle" parent="@android:style/Widget.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_more_vert_black_24dp</item>
     </style>
-    <!-- activiy  切换动画  -->
+
     <style name="fade" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/anim_enter</item>
         <item name="android:activityOpenExitAnimation">@anim/anim_exit</item>
         <item name="android:activityCloseEnterAnimation">@anim/back_enter</item>
         <item name="android:activityCloseExitAnimation">@anim/back_exit</item>
+    </style>
+
+    <style name="LibAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@android:color/background_light</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+    <style name="PickerTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@color/colorPrimary</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabMaxWidth">0dp</item>
+    </style>
+
+    <style name="SmoothCheckBoxStyle">
+        <item name="color_checked">@color/checkbox_color</item>
+        <item name="color_unchecked">@android:color/white</item>
+        <item name="color_unchecked_stroke">@color/checkbox_unchecked_color</item>
+        <item name="color_tick">@android:color/white</item>
+    </style>
+
+    <style name="SettingsFragmentStyle">
+
+        <item name="android:textColorSecondary">#222</item>
+        <item name="android:textColor">#CCC</item>
+        <item name="android:background">#999</item>
+    </style>
+
+    <!--自定义switch的按钮和轨迹颜色theme-->
+    <style name="mySwitch" parent="Theme.AppCompat.Light">
+        <!-- switch 打开时的按钮的颜色 轨迹颜色默认为30%（看效果就明白30%是怎么回事了）这个颜色 -->
+        <item name="colorControlActivated">@color/gray</item>
+        <!--  switch关闭时的按钮的颜色 -->
+        <item name="colorSwitchThumbNormal">@color/colorAccent</item>
+        <!-- switch关闭时的轨迹的颜色 30%这个颜色 -->
+        <item name="android:colorForeground">@color/colorPrimary</item>
     </style>
 </resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.arlib.floatingsearchview.FloatingSearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        app:floatingSearch_close_search_on_keyboard_dismiss="true"
+        app:floatingSearch_leftActionMode="showHamburger"
+        app:floatingSearch_menu="@menu/toolbar"
+        app:floatingSearch_searchBarMarginLeft="7dp"
+        app:floatingSearch_searchBarMarginRight="7dp"
+        app:floatingSearch_searchBarMarginTop="7dp"
+        app:floatingSearch_searchHint="Search..."
+        app:floatingSearch_showSearchKey="false"
+        app:floatingSearch_suggestionsListAnimDuration="250" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/his_recycle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.ramotion.circlemenu.CircleMenuView
+            android:id="@+id/circle_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            app:button_colors="@array/colors"
+            app:button_icons="@array/icons"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</LinearLayout>

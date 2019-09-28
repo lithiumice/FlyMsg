@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:id="@+id/anchor_view"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.stfalcon.chatkit.messages.MessagesList
+            android:id="@+id/messagesList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fitsSystemWindows="true"
+
+            app:outcomingDefaultBubbleColor="@color/colorPrimaryDark"
+            app:textAutoLink="all">
+
+        </com.stfalcon.chatkit.messages.MessagesList>
+
+
+        <com.stfalcon.chatkit.messages.MessageInput
+            android:id="@+id/chat_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:inputHint="type"
+            app:inputTextColor="@color/black"
+            android:fitsSystemWindows="true"
+
+            app:inputTextSize="15sp"
+            app:showAttachmentButton="true" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

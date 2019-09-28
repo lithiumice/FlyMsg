@@ -17,8 +17,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="94dp"
+        android:layout_height="93dp"
         android:layout_margin="15dp"
         android:src="@drawable/profile"
         app:civ_border_color="@color/colorPrimaryDark"
@@ -30,12 +30,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.38" />
 
-    <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#80000000"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -43,10 +43,14 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_image"
         app:layout_constraintVertical_bias="1.0">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <TextView
             android:id="@+id/mymood"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="18dp"
             android:text="@string/default_ip_address"
             android:layout_marginLeft="10dp"
             android:textColor="@color/textIcon"
@@ -55,11 +59,25 @@
         <TextView
             android:id="@+id/myname"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="18dp"
             android:text="@string/default_device_name"
             android:layout_marginLeft="10dp"
 
             android:textColor="@color/textIcon"
             android:textSize="14sp" />
-    </LinearLayout>
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/switch_online"
+            android:layout_width="50dp"
+            android:layout_marginEnd="16dp"
+            android:checked="true"
+            android:theme="@style/mySwitch"
+            android:textOn="opened"
+            android:textOff="closed"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:switchMinWidth="15dp" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
