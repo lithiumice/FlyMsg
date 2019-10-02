@@ -3,13 +3,32 @@
 
     <string name="info">0 user online</string>
     <string name="no_wifi">no wifi connection!</string>
-    <string name="app_name">IPmsg</string>
-    <string name="default_device_name">Android FlyMsg</string>
+    <string name="app_name">FlyMsg</string>
+    <string name="default_device_name">FlyMsg</string>
     <string name="default_device_group">WORKGROUP</string>
     <string name="default_device_alias">FlyMsg</string>
     <string name="default_ip_address">IP: 127.0.0.1</string>
     <string name="flymsg_image_key">YGUYJH</string>
     <string name="root_title">设置</string>
     <string name="date_header_yesterday">昨天</string>
+
+    <string name="title_activity_about">About</string>
+    <string name="about_version">Version: </string>
+    <string name="about_email_intent">Feedback:FlyMsg</string>
+    <string name="about_not_found_email">Not found email app</string>
+    <string name="about_card1_title">FlyMsg</string>
+    <string name="about_card1_message">Hey, glad to see you!</string>
+    <string name="about_card2_title">If you liked the app, feel free to contact me.</string>
+    <string name="about_email">Feedback by E-mail</string>
+    <string name="about_git_hub">Source code on GitHub</string>
+    <string name="about_address">ChongQing, China</string>
+    <string name="about_website">View my website</string>
+    <string name="app_designed_by">developed by LITHIUMICE</string>
+
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+    <string name="delete_his_item">已删除</string>
+
 
 </resources>

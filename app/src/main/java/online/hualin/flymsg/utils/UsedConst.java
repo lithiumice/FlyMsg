@@ -11,4 +11,5 @@ public class UsedConst {
 
 	public static final int FILERECEIVEFAIL = 224;		//接收文件fail
 	public static final int UDPPORTFAIL = 225;		//接收文件fail
+	public static final int FILESENDINFO = 226;		//接收文件fail
 }

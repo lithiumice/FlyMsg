@@ -2,15 +2,18 @@ package online.hualin.flymsg.activity;
 
 import android.app.AlertDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,7 +22,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -28,9 +33,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import es.dmoral.toasty.Toasty;
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
 import online.hualin.flymsg.net.NetTcpFileReceiveThread;
@@ -43,8 +46,12 @@ import online.hualin.flymsg.utils.UsedConst;
 public abstract class BaseActivity extends AppCompatActivity {
     protected static LinkedList<BaseActivity> queue = new LinkedList<BaseActivity>();
     protected static NetThreadHelper netThreadHelper;
-    private static int notification_id = 9786970;
+    private static String notification_id = "download";
+    private static String notify_channel = "下载通知";
     private static Ringtone ringTone;
+    private static SharedPreferences pref=App.getPref();
+
+
     private static Handler handler = new Handler() {
 
         @Override
@@ -79,8 +86,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                                             Thread fileReceiveThread = new Thread(new NetTcpFileReceiveThread(extraMsg[3], extraMsg[0], fileInfos));    //新建一个接受文件线程
                                             fileReceiveThread.start();    //启动线程
 
-                                            Toast.makeText(getCurrentActivity(), "开始接收文件", Toast.LENGTH_SHORT).show();
-                                            queue.getLast().showNotification("开始接收文件");    //显示notification
+                                            Toasty.info(getCurrentActivity(), "开始接收文件", Toast.LENGTH_SHORT).show();
+                                            queue.getLast().showNotification("开始接收文件", "开始接收文件", -1);    //显示notification
                                         }
                                     })
                             .setNegativeButton("取消",
@@ -91,8 +98,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                                             IpMessageProtocol ipmsgSend = new IpMessageProtocol();
                                             ipmsgSend.setVersion("" + IpMessageConst.VERSION);    //拒绝命令字
                                             ipmsgSend.setCommandNo(IpMessageConst.IPMSG_RELEASEFILES);
-                                            ipmsgSend.setSenderName(R.string.default_device_name + "");
-                                            ipmsgSend.setSenderHost(R.string.default_device_group + "");
+                                            ipmsgSend.setSenderName(App.getDeviceName());
+                                            ipmsgSend.setSenderHost("127.0.0.1");
                                             ipmsgSend.setAdditionalSection(extraMsg[3] + "\0");    //附加信息里是确认收到的包的编号
 
                                             InetAddress sendAddress = null;
@@ -112,7 +119,15 @@ public abstract class BaseActivity extends AppCompatActivity {
                 case UsedConst.FILERECEIVEINFO: {    //更新接收文件进度条
                     int[] sendedPer = (int[]) msg.obj;    //得到信息
                     BaseActivity oneActivity = queue.getLast();
-                    oneActivity.getNotificationManager().notify(notification_id, oneActivity.getNotification("文件" + (sendedPer[0] + 1) + "接受中:" + sendedPer[1] + "%", sendedPer[1]));
+                    oneActivity.showNotification("文件" + (sendedPer[0] + 1) + "接受中:" + sendedPer[1] + "%", "", sendedPer[1]);
+
+                }
+                break;
+
+                case UsedConst.FILESENDINFO: {
+                    int[] sendedPer = (int[]) msg.obj;
+                    BaseActivity oneActivity = queue.getLast();
+                    oneActivity.showNotification("文件" + (sendedPer[0] + 1) + "发送中:" + sendedPer[1] + "%", "", sendedPer[1]);
 
                 }
                 break;
@@ -121,13 +136,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     int[] successNum = (int[]) msg.obj;
                     StringBuilder notText = new StringBuilder("第" + successNum[0] + "个文件接收成功");
                     queue.getLast().makeTextShort("第" + successNum[0] + "个文件接收成功");
-//                    if (successNum[0] == successNum[1]) {
-//                        notText = new StringBuilder("所有文件接收成功");
-////					queue.getLast().mNotManager.cancel(notification_id);
-//                        queue.getLast().makeTextShort("所有文件接收成功");
-//                    }
                     BaseActivity oneActivity = queue.getLast();
-                    oneActivity.getNotificationManager().notify(notification_id, oneActivity.getNotification(notText.toString(), -1));
+                    oneActivity.showNotification("", notText.toString(), -1);
                 }
                 break;
 
@@ -147,6 +157,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
+    private NotificationManager notificationManager;
+    private Notification notification;
+
     public static BaseActivity getActivity(int index) {
         if (index < 0 || index >= queue.size())
             throw new IllegalArgumentException("out of queue");
@@ -157,7 +170,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return queue.getLast();
     }
 
-    public static void sendMessage(int cmd, String text) {
+    public static void sendMessage(int cmd, Object text) {//customise
         Message msg = new Message();
         msg.obj = text;
         msg.what = cmd;
@@ -165,7 +178,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public static void globalToast(String msg) {
-        Toast.makeText(App.getContext(), msg, Toast.LENGTH_SHORT).show();
+        Toasty.info(App.getContext(), msg, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -183,7 +196,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public static void playMsg() {
-        ringTone.play();
+       boolean isPlayNotify=pref.getBoolean("switch_notify",true);
+        if (isPlayNotify) {
+            ringTone.play();
+        }
     }
 
     public static void sendFileByPaths(String[] filePathArray, String senderName, String senderGroup, String receiverIp) {
@@ -223,20 +239,34 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    public void setToolbar(Toolbar toolbar, int indicator) {
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//                getSupportActionBar().setDisplayShowTitleEnabled(false);
+                if (indicator == 0) {
+                    indicator = R.drawable.ic_menu;
+                } else if (indicator == 1) {
+                    indicator = R.drawable.ic_arrow_back;
+                }
+                getSupportActionBar().setHomeAsUpIndicator(indicator);
+
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         netThreadHelper = NetThreadHelper.newInstance();
-
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (!queue.contains(this))
             queue.add(this);
         ringTone = RingtoneManager.getRingtone(getApplicationContext()
                 , Uri.fromFile(new File("/system/media/audio/ringtones/luna.ogg")));
 
-//        getApplication().getDa
     }
-
-
 
     public void makeTextShort(String text) {
         Snackbar.make(getWindow().getDecorView(), text, Snackbar.LENGTH_SHORT).show();
@@ -260,15 +290,46 @@ public abstract class BaseActivity extends AppCompatActivity {
         queue.removeLast();
     }
 
-    protected void showNotification(String title) {
-        Intent intent = new Intent(this, Activity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-        NotificationCompat.Builder notBuild = new NotificationCompat.Builder(this, "0");
-        notBuild.setSmallIcon(R.drawable.ic_bird_f);
-        notBuild.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f));
-        notBuild.setContentIntent(pi);
-        notBuild.setContentTitle(title);
-        getNotificationManager().notify(notification_id, notBuild.build());
+    protected void showNotification(String title, String content, int progress) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent intent = new Intent(this, MainActivity.class);
+            PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+
+            NotificationChannel mChannel = new NotificationChannel(notification_id, notify_channel, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+            if (progress>0){
+                notification = new Notification.Builder(this, notify_channel)
+                        .setChannelId(notification_id)
+                        .setSmallIcon(R.drawable.ic_bird_f)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f))
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setContentIntent(pi)
+                        .setProgress(100,progress,false)
+                        .build();
+            }else{
+                notification = new Notification.Builder(this, notify_channel)
+                        .setChannelId(notification_id)
+                        .setSmallIcon(R.drawable.ic_bird_f)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f))
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setContentIntent(pi)
+                        .build();
+            }
+            getNotificationManager().notify(1, notification);
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+            NotificationCompat.Builder notBuild = new NotificationCompat.Builder(this, "FlyMsg");
+            notBuild.setSmallIcon(R.drawable.ic_bird_f);
+            notBuild.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f));
+            notBuild.setContentIntent(pi);
+            notBuild.setContentTitle(title);
+            notBuild.setContentText(content);
+
+            getNotificationManager().notify(1, notBuild.build());
+        }
     }
 
     @Override
@@ -287,26 +348,5 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private NotificationManager getNotificationManager() {
         return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    }
-
-    private Notification getNotification(String title, int progress) {
-        Intent intent = new Intent(this, Activity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "0");
-        builder.setSmallIcon(R.drawable.ic_bird_f);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f));
-        builder.setContentIntent(pi);
-        builder.setContentTitle(title);
-        if (progress >= 0) {
-            // 当progress大于或等于0时才需显示下载进度
-            builder.setContentText(progress + "%");
-            builder.setProgress(100, progress, false);
-        }
-        return builder.build();
-    }//progress -1
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

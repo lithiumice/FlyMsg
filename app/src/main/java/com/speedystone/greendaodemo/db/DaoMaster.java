@@ -21,15 +21,15 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
-        ChatHistoryDao.createTable(db, ifNotExists);
         FileHistoryDao.createTable(db, ifNotExists);
+        ChatHistoryDao.createTable(db, ifNotExists);
         PoetryDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
-        ChatHistoryDao.dropTable(db, ifExists);
         FileHistoryDao.dropTable(db, ifExists);
+        ChatHistoryDao.dropTable(db, ifExists);
         PoetryDao.dropTable(db, ifExists);
     }
 
@@ -49,8 +49,8 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
-        registerDaoClass(ChatHistoryDao.class);
         registerDaoClass(FileHistoryDao.class);
+        registerDaoClass(ChatHistoryDao.class);
         registerDaoClass(PoetryDao.class);
     }
 

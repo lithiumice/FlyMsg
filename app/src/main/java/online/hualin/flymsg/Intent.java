@@ -1,7 +1,10 @@
 package online.hualin.flymsg;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import java.io.File;
 
@@ -28,6 +31,14 @@ import java.io.File;
 
 
 public class Intent {
+
+    private void dispatchTakePictureIntent(Activity context,int REQUEST_IMAGE_CAPTURE) {
+        android.content.Intent takePictureIntent = new android.content.Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
     //android获取一个用于打开HTML文件的intent
     public static android.content.Intent getHtmlFileIntent(String param) {
         Uri uri = Uri.parse(param).buildUpon().encodedAuthority("com.android.htmlfileprovider").scheme("content").encodedPath(param).build();

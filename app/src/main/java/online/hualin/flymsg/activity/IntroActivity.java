@@ -27,28 +27,23 @@ public class IntroActivity extends AppCompatActivity {
         engine.setOnChangeListener(new PaperOnboardingOnChangeListener() {
             @Override
             public void onPageChanged(int oldElementIndex, int newElementIndex) {
-                Toast.makeText(getApplicationContext(), "Swiped from " + oldElementIndex + " to " + newElementIndex, Toast.LENGTH_SHORT).show();
             }
         });
 
         engine.setOnRightOutListener(new PaperOnboardingOnRightOutListener() {
             @Override
             public void onRightOut() {
-                // Probably here will be your exit action
-                Toast.makeText(getApplicationContext(), "Swiped out right", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    // Just example data for Onboarding
     private ArrayList<PaperOnboardingPage> getDataForOnboarding() {
-        // prepare data
-        PaperOnboardingPage scr1 = new PaperOnboardingPage("Hotels", "All hotels and hostels are sorted by hospitality rating",
+        PaperOnboardingPage scr1 = new PaperOnboardingPage("Hotels", "Transfer your file without internet connection!",
                 Color.parseColor("#678FB4"), R.drawable.intro_1, R.drawable.ic_unlock);
-        PaperOnboardingPage scr2 = new PaperOnboardingPage("Banks", "We carefully verify all banks before add them into the app",
+        PaperOnboardingPage scr2 = new PaperOnboardingPage("Banks", "SOGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGOOD",
                 Color.parseColor("#65B0B4"), R.drawable.intro_2, R.drawable.ic_comment);
-        PaperOnboardingPage scr3 = new PaperOnboardingPage("Stores", "All local stores are categorized for your convenience",
+        PaperOnboardingPage scr3 = new PaperOnboardingPage("Stores", "OHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH",
                 Color.parseColor("#9B90BC"), R.drawable.intro_3, R.drawable.ic_explore_title);
 
         ArrayList<PaperOnboardingPage> elements = new ArrayList<>();

@@ -9,5 +9,6 @@ public class Constant {
     public static String MY_WEBSITE = "https://hualin.online";
     private static String DESIGNED_BY = "Designed by lithiumice";
     public static String SHARE_CONTENT = "A File and Chat software:\n" + APP_URL + "\n- " + DESIGNED_BY;
+    public static final String APPLICATION_NAME="FLYMSG";
 
 }

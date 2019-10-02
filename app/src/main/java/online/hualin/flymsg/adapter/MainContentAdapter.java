@@ -10,21 +10,15 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import online.hualin.flymsg.fragment.HistoryFrag;
 import online.hualin.flymsg.fragment.HomeFrag;
-import online.hualin.flymsg.fragment.lottie_frag;
 
 
 public class MainContentAdapter extends FragmentPagerAdapter {
-    public final int COUNT = 3;
-    private Context context;
-    private String[] tabTitiles = new String[]{"设备", "历史", "文件"};
-    private FragmentManager fragmentManager;
+    public final int COUNT=2;
+    private String[] tabTitiles = new String[]{"设备", "历史"};
 
-    private HomeFrag homeFrag;
 
     public MainContentAdapter(FragmentManager fm, Context context) {
         super(fm);
-        this.fragmentManager = fm;
-        this.context = context;
     }
 
     @Override
@@ -33,21 +27,15 @@ public class MainContentAdapter extends FragmentPagerAdapter {
             case 0:
                 return new HomeFrag();
 
-            case 1:
+            default:
                 return new HistoryFrag();
 
-            default:
-                return new lottie_frag();
         }
     }
 
     @Override
     public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.setPrimaryItem(container, position, object);
-    }
-
-    public HomeFrag getHomeFrag() {
-        return homeFrag;
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
-import online.hualin.flymsg.activity.Activity;
+import online.hualin.flymsg.activity.MainActivity;
 import online.hualin.flymsg.activity.BaseActivity;
 import online.hualin.flymsg.data.ChatMessage;
 import online.hualin.flymsg.data.User;
@@ -61,7 +61,7 @@ public class NetThreadHelper implements Runnable {
     private int userCount = 0; //用户个数。注意，此项值只有在调用getSimpleExpandableListAdapter()才会更新，目的是与adapter中用户个数保持一致
     private Queue<ChatMessage> receiveMsgQueue;    //消息队列,在没有聊天窗口时将接收的消息放到这个队列中
     private Vector<ReceiveMsgListener> listeners;    //ReceiveMsgListener容器，当一个聊天窗口打开时，将其加入。一定要记得适时将其移除
-    private App app;
+    private DaoSession daoSession;
 
     private Resources res;
 
@@ -70,8 +70,8 @@ public class NetThreadHelper implements Runnable {
         receiveMsgQueue = new ConcurrentLinkedQueue<ChatMessage>();
         listeners = new Vector<ReceiveMsgListener>();
         res = App.getContext().getResources();
-        selfName = res.getString(R.string.default_device_name);
-        selfGroup = res.getString(R.string.default_device_group);
+        selfName = App.getDeviceName();
+        selfGroup = App.getGroupName();
     }
 
     private NetThreadHelper(String name, String group) {
@@ -160,8 +160,7 @@ public class NetThreadHelper implements Runnable {
         InetAddress broadcastAddr;
         try {
             broadcastAddr = InetAddress.getByName("255.255.255.255");    //广播地址
-            sendUdpData(ipmsgSend.getProtocolString(), broadcastAddr, IpMessageConst.PORT);    //发送数据
-//            sendUdpData(ipmsgSend.getProtocolString() + "\0", broadcastAddr, IpMessageConst.PORT);    //发送数据
+            sendUdpData(ipmsgSend.getProtocolString() + "\0", broadcastAddr, IpMessageConst.PORT);    //发送数据
         } catch (UnknownHostException e) {
 
             e.printStackTrace();
@@ -205,11 +204,11 @@ public class NetThreadHelper implements Runnable {
             }
             String ipmsgStr = "";
             try {
-                ipmsgStr = new String(resBuffer, 0, udpResPacket.getLength(), "UTF-8");
+                ipmsgStr = new String(resBuffer, 0, udpResPacket.getLength(), "gbk");
             } catch (UnsupportedEncodingException e) {
 
                 e.printStackTrace();
-                Log.e(TAG, "接收数据时，系统不支持UTF-8编码");
+                Log.e(TAG, "接收数据时，系统不支持gbk编码");
             }//截取收到的数据
 
             Log.i(TAG, "接收到的UDP数据内容为:" + ipmsgStr);
@@ -298,16 +297,7 @@ public class NetThreadHelper implements Runnable {
                         BaseActivity.playMsg();
                         BaseActivity.sendEmptyMessage(IpMessageConst.IPMSG_SENDMSG);    //更新主界面UI
                     }
-                    DaoSession daoSession = ((App) getApplication()).getDaoSession();
-                    ChatHistoryDao chatHistoryDao = daoSession.getChatHistoryDao();
-
-                    ChatHistory chatHistory=new ChatHistory();
-                    chatHistory.setSenderIp(senderIp);
-                    chatHistory.setSenderName(senderName);
-                    chatHistory.setSendMsg(msgStr);
-                    chatHistory.setTime(new Date().toString());
-                    chatHistoryDao.insert(chatHistory);
-                    Log.d("DaoExample", "Inserted new chat history, ID: " + chatHistory.getId());
+                    insertChatHisData(senderIp,senderName,msgStr);
                 }
                 break;
 
@@ -336,6 +326,20 @@ public class NetThreadHelper implements Runnable {
 
         udpThread = null;
 
+    }
+
+    public void insertChatHisData(String senderIp,String senderName,String msgStr){
+        if (daoSession==null){
+            daoSession= ((App)getApplication()).getDaoSession();
+        }
+        ChatHistoryDao chatHistoryDao = daoSession.getChatHistoryDao();
+
+        ChatHistory chatHistory=new ChatHistory();
+        chatHistory.setSenderIp(senderIp);
+        chatHistory.setSenderName(senderName);
+        chatHistory.setSendMsg(msgStr);
+        chatHistory.setTime(new Date().toString());
+        chatHistoryDao.insert(chatHistory);
     }
 
     public boolean connectSocket() {    //监听端口，接收UDP数据
@@ -387,7 +391,7 @@ public class NetThreadHelper implements Runnable {
 
     public void sendUdpData(String sendStr, InetAddress sendto, int sendPort) {    //发送UDP数据包的方法
         try {
-            sendBuffer = sendStr.getBytes("UTF-8");
+            sendBuffer = sendStr.getBytes("gbk");
             // 构造发送的UDP数据包
             udpSendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, sendto, sendPort);
 
@@ -399,7 +403,7 @@ public class NetThreadHelper implements Runnable {
         } catch (UnsupportedEncodingException e) {
 
             e.printStackTrace();
-            Log.e(TAG, "sendUdpData(String sendStr, int port)....系统不支持UTF-8编码");
+            Log.e(TAG, "sendUdpData(String sendStr, int port)....系统不支持gbk编码");
         } catch (IOException e) {    //发送UDP数据包出错
 
             e.printStackTrace();
@@ -427,19 +431,19 @@ public class NetThreadHelper implements Runnable {
         String[] userInfo = extraInfo.split("\0");    //对附加信息进行分割,得到用户名和分组名
         if (userInfo.length < 1) {
             user.setName(ipmsgPro.getSenderName());
-            if (userIp.equals(Activity.hostIp))
+            if (userIp.equals(MainActivity.hostIp))
                 user.setGroupName("自己");
             else
                 user.setGroupName("未分组");
         } else if (userInfo.length == 1) {
             user.setName(userInfo[0]);
-            if (userIp.equals(Activity.hostIp))
+            if (userIp.equals(MainActivity.hostIp))
                 user.setGroupName("自己");
             else
                 user.setGroupName("未分组");
         } else {
             user.setName(userInfo[0]);
-            if (userIp.equals(Activity.hostIp))
+            if (userIp.equals(MainActivity.hostIp))
                 user.setGroupName("自己");
             else
                 user.setGroupName(userInfo[1]);

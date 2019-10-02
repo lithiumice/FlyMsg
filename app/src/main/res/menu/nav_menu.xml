@@ -13,23 +13,7 @@
             android:id="@+id/about"
             android:icon="@drawable/ic_about_white_24dp"
             android:title="about" />
-        <item
-            android:id="@+id/change_skin"
-            android:icon="@drawable/ic_comment"
-            android:title="night" />
 
-        <item
-            android:id="@+id/action_other"
-            android:checked="false"
-            android:title="Share">
-
-            <item
-                android:id="@+id/action_qq"
-                android:checked="false"
-                android:icon="@drawable/ic_bird_f"
-                android:title="QQ" />
-
-        </item>
 
     </group>
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/select_image"
+        android:title="Image"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/select_vedio"
+        app:showAsAction="never"
+
+        android:title="Video"/>
+    <item android:id="@+id/select_audio"
+        app:showAsAction="never"
+
+        android:title="Audio"/>
+    <item android:id="@+id/select_file"
+        app:showAsAction="never"
+
+        android:title="File"/>
+
+</menu>

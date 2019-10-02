@@ -1,52 +1,49 @@
 package online.hualin.flymsg.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ActivityOptions;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.transition.Fade;
-import android.transition.Transition;
-import android.view.Window;
+import android.os.CountDownTimer;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import online.hualin.flymsg.R;
 
 public class LoadActivity extends AppCompatActivity {
-    private final static int LOAD_ACTIVITY_TIME=1000;
+    CountDownTimer countDownTimer = new CountDownTimer(500, 500) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+
+        }
+
+        @Override
+        public void onFinish() {
+            Intent intent = new Intent(LoadActivity.this, MainActivity.class);
+            startActivity(intent);
+            overridePendingTransition(-1, R.anim.activity_exit_alpha);
+            finish();
+        }
+    };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // 设置contentFeature,可使用切换动画
-            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-//            init_explode();// 分解
-//            init_Slide();//滑动进入
-            init_fade();//淡入淡出
-        }
         setContentView(R.layout.activity_load);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-                Intent intent=new Intent(getApplicationContext(), Activity.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(LoadActivity.this).toBundle());
-                } else {
-                    startActivity(intent);
-                }
-
-            }
-        },LOAD_ACTIVITY_TIME);
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void init_fade() {
-        Transition transition = new Fade().setDuration(200);
-        getWindow().setEnterTransition(transition);
-        getWindow().setExitTransition(transition);
+    @Override
+    protected void onResume() {
+        countDownTimer.cancel();
+        countDownTimer.start();
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        countDownTimer.cancel();
+        super.onStop();
     }
 }
+
+
+

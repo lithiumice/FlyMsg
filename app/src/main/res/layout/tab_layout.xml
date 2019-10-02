@@ -3,16 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="40dp">
+    android:layout_height="match_parent">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="40dp"
         app:tabMaxWidth="0dp"
-        app:tabPaddingStart="-1dp"
-        app:tabPaddingEnd="-1dp"
         app:tabGravity="fill"
+        android:background="@color/colorPrimary"
         app:tabIndicatorColor="@color/colorAccent"
         app:tabMode="fixed">
 
@@ -20,7 +19,8 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
     </androidx.viewpager.widget.ViewPager>
 </LinearLayout>

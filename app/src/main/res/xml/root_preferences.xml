@@ -8,26 +8,27 @@
 
     </PreferenceCategory>
     <EditTextPreference
-        android:defaultValue="用户名"
-        android:key="device_user_name"
+        android:defaultValue="FLYMSG"
+        android:key="DeviceName"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="device_user_name" />
+        android:summary="该设置需要重启软件才能生效"
+
+        android:title="用户名" />
     <EditTextPreference
-        android:defaultValue="组名"
-        android:key="device_group_name"
+        android:defaultValue="WORKGROUP"
+        android:key="GroupName"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="device_group_name" />
+        android:summary="该设置需要重启软件才能生效"
+        android:title="组名" />
+
     <PreferenceCategory android:title="额外设置">
 
     </PreferenceCategory>
-    <RingtonePreference
-        android:defaultValue=""
-        android:key="ringtone_preference_1"
-        android:title="Ringtone preference" />
+
     <SwitchPreference
-        android:defaultValue="false"
-        android:key="switch_preference_1"
-        android:title="Switch preference" />
+        android:defaultValue="true"
+        android:key="switch_notify"
+        android:title="打开通知音" />
 </PreferenceScreen>
