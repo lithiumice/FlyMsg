@@ -27,15 +27,19 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.speedystone.greendaodemo.db.ChatHistoryDao;
+import com.speedystone.greendaodemo.db.DaoSession;
 
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.LinkedList;
 
 import es.dmoral.toasty.Toasty;
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
+import online.hualin.flymsg.db.ChatHistory;
 import online.hualin.flymsg.net.NetTcpFileReceiveThread;
 import online.hualin.flymsg.net.NetTcpFileSendThread;
 import online.hualin.flymsg.net.NetThreadHelper;
@@ -43,14 +47,17 @@ import online.hualin.flymsg.utils.IpMessageConst;
 import online.hualin.flymsg.utils.IpMessageProtocol;
 import online.hualin.flymsg.utils.UsedConst;
 
+import static online.hualin.flymsg.App.getApplication;
+
 public abstract class BaseActivity extends AppCompatActivity {
     protected static LinkedList<BaseActivity> queue = new LinkedList<BaseActivity>();
     protected static NetThreadHelper netThreadHelper;
-    private static String notification_id = "download";
-    private static String notify_channel = "下载通知";
+    private static String notification_id = "flymsg";
+    private static String notify_channel_receive = "接受文件通知";
+    private static String notify_channel_send = "发送文件通知";
     private static Ringtone ringTone;
     private static SharedPreferences pref=App.getPref();
-
+private static App app;
 
     private static Handler handler = new Handler() {
 
@@ -74,75 +81,111 @@ public abstract class BaseActivity extends AppCompatActivity {
                             "发送者名称:\t" + extraMsg[2] + "\n" +
                             "文件总数:\t" + fileInfos.length;
 
-                    new AlertDialog.Builder(queue.getLast())
-                            .setIcon(R.drawable.ic_about_white_24dp)
-                            .setTitle("收到文件传输请求")
-                            .setMessage(infoStr)
-                            .setPositiveButton("接收",
-                                    new DialogInterface.OnClickListener() {
+                    //TODO
+                    insertChatHisData(extraMsg[0],extraMsg[2],extraMsg[1]);
 
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Thread fileReceiveThread = new Thread(new NetTcpFileReceiveThread(extraMsg[3], extraMsg[0], fileInfos));    //新建一个接受文件线程
-                                            fileReceiveThread.start();    //启动线程
+                    if (pref.getBoolean("AutoReceive",false)){
+                        Thread fileReceiveThread = new Thread(new NetTcpFileReceiveThread(extraMsg[3], extraMsg[0], fileInfos));    //新建一个接受文件线程
+                        fileReceiveThread.start();    //启动线程
 
-                                            Toasty.info(getCurrentActivity(), "开始接收文件", Toast.LENGTH_SHORT).show();
-                                            queue.getLast().showNotification("开始接收文件", "开始接收文件", -1);    //显示notification
-                                        }
-                                    })
-                            .setNegativeButton("取消",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //发送拒绝报文
-                                            //构造拒绝报文
-                                            IpMessageProtocol ipmsgSend = new IpMessageProtocol();
-                                            ipmsgSend.setVersion("" + IpMessageConst.VERSION);    //拒绝命令字
-                                            ipmsgSend.setCommandNo(IpMessageConst.IPMSG_RELEASEFILES);
-                                            ipmsgSend.setSenderName(App.getDeviceName());
-                                            ipmsgSend.setSenderHost("127.0.0.1");
-                                            ipmsgSend.setAdditionalSection(extraMsg[3] + "\0");    //附加信息里是确认收到的包的编号
+                        Toasty.info(getCurrentActivity(), "开始接收文件", Toast.LENGTH_SHORT).show();
+                        queue.getLast().showNotification("开始接收文件", "开始接收文件", -1);    //显示notification
+                    }else {
+                        new AlertDialog.Builder(queue.getLast())
+                                .setIcon(R.drawable.ic_about_white_24dp)
+                                .setTitle("收到文件传输请求")
+                                .setMessage(infoStr)
+                                .setPositiveButton("接收",
+                                        new DialogInterface.OnClickListener() {
 
-                                            InetAddress sendAddress = null;
-                                            try {
-                                                sendAddress = InetAddress.getByName(extraMsg[0]);
-                                            } catch (UnknownHostException e) {
-                                                e.printStackTrace();
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Thread fileReceiveThread = new Thread(new NetTcpFileReceiveThread(extraMsg[3], extraMsg[0], fileInfos));    //新建一个接受文件线程
+                                                fileReceiveThread.start();    //启动线程
+
+                                                Toasty.info(getCurrentActivity(), "开始接收文件", Toast.LENGTH_SHORT).show();
+                                                queue.getLast().showNotification("开始接收文件", "开始接收文件", -1);    //显示notification
                                             }
-                                            netThreadHelper.sendUdpData(ipmsgSend.getProtocolString(), sendAddress, IpMessageConst.PORT);
+                                        })
+                                .setNegativeButton("取消",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                //发送拒绝报文
+                                                //构造拒绝报文
+                                                IpMessageProtocol ipmsgSend = new IpMessageProtocol();
+                                                ipmsgSend.setVersion("" + IpMessageConst.VERSION);    //拒绝命令字
+                                                ipmsgSend.setCommandNo(IpMessageConst.IPMSG_RELEASEFILES);
+                                                ipmsgSend.setSenderName(App.getDeviceName());
+                                                ipmsgSend.setSenderHost("127.0.0.1");
+                                                ipmsgSend.setAdditionalSection(extraMsg[3] + "\0");    //附加信息里是确认收到的包的编号
 
-                                        }
-                                    }).show();
+                                                InetAddress sendAddress = null;
+                                                try {
+                                                    sendAddress = InetAddress.getByName(extraMsg[0]);
+                                                } catch (UnknownHostException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                netThreadHelper.sendUdpData(ipmsgSend.getProtocolString(), sendAddress, IpMessageConst.PORT);
+
+                                            }
+                                        })
+                                .setNeutralButton("自动接收文件", new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        pref.edit().putBoolean("AutoReceive", true).apply();
+                                        Toasty.warning(getCurrentActivity(),"自动接收文件已打开,你可以在设置界面关闭",Toasty.LENGTH_LONG).show();
+                                        Thread fileReceiveThread = new Thread(new NetTcpFileReceiveThread(extraMsg[3], extraMsg[0], fileInfos));    //新建一个接受文件线程
+                                        fileReceiveThread.start();    //启动线程
+
+                                        queue.getLast().showNotification("开始接收文件", "开始接收文件", -1);    //显示notification
+                                    }
+                                })
+                                .show();
+                    }
 
                 }
                 break;
 
                 case UsedConst.FILERECEIVEINFO: {    //更新接收文件进度条
-                    int[] sendedPer = (int[]) msg.obj;    //得到信息
+//                    int[] sendedPer = (int[]) msg.obj;    //得到信息
+                    String[] sendInfo=(String[]) msg.obj;
                     BaseActivity oneActivity = queue.getLast();
-                    oneActivity.showNotification("文件" + (sendedPer[0] + 1) + "接受中:" + sendedPer[1] + "%", "", sendedPer[1]);
+                    oneActivity.showNotification("文件" + sendInfo[0] + "接受中:" + sendInfo[1] + "%", "", Integer.parseInt(sendInfo[1]));
 
                 }
                 break;
 
                 case UsedConst.FILESENDINFO: {
-                    int[] sendedPer = (int[]) msg.obj;
+//                    int[] sendedPer = (int[]) msg.obj;
+                    String[] sendInfo=(String[]) msg.obj;
+
                     BaseActivity oneActivity = queue.getLast();
-                    oneActivity.showNotification("文件" + (sendedPer[0] + 1) + "发送中:" + sendedPer[1] + "%", "", sendedPer[1]);
+                    oneActivity.showNotification("文件" + sendInfo[0] + "发送中:" + sendInfo[1] + "%", "", Integer.parseInt(sendInfo[1]));
 
                 }
                 break;
 
                 case UsedConst.FILERECEIVESUCCESS: {    //成功接受文件
-                    int[] successNum = (int[]) msg.obj;
-                    StringBuilder notText = new StringBuilder("第" + successNum[0] + "个文件接收成功");
-                    queue.getLast().makeTextShort("第" + successNum[0] + "个文件接收成功");
+                    queue.getLast().makeTextShort("文件发送成功");
+                    String info=(String) msg.obj;
+
                     BaseActivity oneActivity = queue.getLast();
-                    oneActivity.showNotification("", notText.toString(), -1);
+                    oneActivity.showNotificationSuccess("文件接收成功", info+"接收成功", -1,0,null);
+                }
+
+                case UsedConst.FILESENDSUCCESS: {
+                    String info=(String) msg.obj;
+                    BaseActivity oneActivity = queue.getLast();
+                    oneActivity.showNotificationSuccess("文件发送成功", info+"发送成功", -1,1,null);
                 }
                 break;
 
                 case UsedConst.UDPPORTFAIL:
                     globalToast("绑定port失败");
+
+                case    UsedConst.FILERECEIVEFAIL:
+                    globalToast("文件接受失败!");
 
                 default:
                     if (queue.size() > 0)
@@ -152,6 +195,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
     };
+    private static void insertChatHisData(String senderIp, String senderName, String msgStr) {
+        DaoSession daoSession = app.getDaoSession();
+        ChatHistoryDao chatHistoryDao = daoSession.getChatHistoryDao();
+
+        ChatHistory chatHistory = new ChatHistory();
+        chatHistory.setSenderIp(senderIp);
+        chatHistory.setSenderName(senderName);
+        chatHistory.setSendMsg(msgStr);
+        chatHistory.setTime(new Date().toString());
+        chatHistoryDao.insert(chatHistory);
+    }
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -244,7 +298,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//                getSupportActionBar().setDisplayShowTitleEnabled(false);
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
                 if (indicator == 0) {
                     indicator = R.drawable.ic_menu;
                 } else if (indicator == 1) {
@@ -266,6 +320,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         ringTone = RingtoneManager.getRingtone(getApplicationContext()
                 , Uri.fromFile(new File("/system/media/audio/ringtones/luna.ogg")));
 
+        app=(App) getApplication();
     }
 
     public void makeTextShort(String text) {
@@ -290,15 +345,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         queue.removeLast();
     }
 
-    protected void showNotification(String title, String content, int progress) {
+    public void showNotification(String title, String content, int progress) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Intent intent = new Intent(this, MainActivity.class);
             PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
 
-            NotificationChannel mChannel = new NotificationChannel(notification_id, notify_channel, NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel mChannel = new NotificationChannel(notification_id, notify_channel_receive, NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(mChannel);
             if (progress>0){
-                notification = new Notification.Builder(this, notify_channel)
+                notification = new Notification.Builder(this, notify_channel_receive)
                         .setChannelId(notification_id)
                         .setSmallIcon(R.drawable.ic_bird_f)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f))
@@ -308,7 +363,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         .setProgress(100,progress,false)
                         .build();
             }else{
-                notification = new Notification.Builder(this, notify_channel)
+                notification = new Notification.Builder(this, notify_channel_receive)
                         .setChannelId(notification_id)
                         .setSmallIcon(R.drawable.ic_bird_f)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f))
@@ -321,6 +376,58 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             Intent intent = new Intent(this, MainActivity.class);
             PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+            NotificationCompat.Builder notBuild = new NotificationCompat.Builder(this, "FlyMsg");
+            notBuild.setSmallIcon(R.drawable.ic_bird_f);
+            notBuild.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f));
+            notBuild.setContentIntent(pi);
+            notBuild.setContentTitle(title);
+            notBuild.setContentText(content);
+
+            getNotificationManager().notify(1, notBuild.build());
+        }
+    }
+
+
+    public void showNotificationSuccess(String title, String content, int progress,int type,String filePath) {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            StringBuilder notify_channel=new StringBuilder();
+            if (type==0){
+               notify_channel=new StringBuilder(notify_channel_receive);
+            }else{
+                notify_channel=new StringBuilder(notify_channel_send);
+
+
+            }
+
+            NotificationChannel mChannel = new NotificationChannel(notification_id, notify_channel.toString(), NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(mChannel);
+            if (progress>0){
+                notification = new Notification.Builder(this, notify_channel.toString())
+                        .setChannelId(notification_id)
+                        .setSmallIcon(R.drawable.ic_bird_f)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f))
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setContentIntent(pi)
+                        .setProgress(100,progress,false)
+                        .build();
+            }else{
+                notification = new Notification.Builder(this, notify_channel.toString())
+                        .setChannelId(notification_id)
+                        .setSmallIcon(R.drawable.ic_bird_f)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f))
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setContentIntent(pi)
+                        .build();
+            }
+            getNotificationManager().notify(1, notification);
+        } else {
             NotificationCompat.Builder notBuild = new NotificationCompat.Builder(this, "FlyMsg");
             notBuild.setSmallIcon(R.drawable.ic_bird_f);
             notBuild.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_bird_f));

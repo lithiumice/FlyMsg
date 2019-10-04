@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import online.hualin.flymsg.App;
 import online.hualin.flymsg.activity.BaseActivity;
 import online.hualin.flymsg.utils.IpMessageConst;
 import online.hualin.flymsg.utils.IpMessageProtocol;
@@ -77,19 +78,18 @@ public class NetTcpFileSendThread implements Runnable{
 					sendNum += rlen;	//已接收文件大小
 					int sendedPer = (int) (sendNum * 100 / total);	//接收百分比
 					if(temp != sendedPer) {    //每增加一个百分比，发送一个message
-						int[] msgObj = {i, sendedPer};
-						Message msg = new Message();
-						msg.what = UsedConst.FILESENDINFO;
-						msg.obj = msgObj;
-						BaseActivity.sendMessage(msg);
+
+						String[] msgObj = {filePathArray[sendFileNo], sendedPer+""};
+
+						BaseActivity.sendMessage(UsedConst.FILESENDINFO,msgObj);
 
 //						EventBus.getDefault().post(sendedPer);
 						temp = sendedPer;
 					}
 				}
 				bos.flush();
-				Log.i(TAG, "文件发送成功");
-				
+				Log.i(TAG, "文件发送成功:"+filePathArray[sendFileNo]);
+				BaseActivity.sendMessage(UsedConst.FILESENDSUCCESS,filePathArray[sendFileNo]+"");
 				if(bis != null){
 					bis.close();
 					bis = null;

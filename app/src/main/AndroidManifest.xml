@@ -25,7 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.ShareToActivity"
+        <activity android:name=".activity.FileBrowserActivity"
+            android:exported="true"></activity>
+        <activity
+            android:name=".activity.ShareToActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -64,9 +67,7 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:launchMode="singleTask">
-
-        </activity>
+            android:launchMode="singleTask"></activity>
     </application>
 
 </manifest>

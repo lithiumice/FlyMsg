@@ -289,6 +289,15 @@ public class NetThreadHelper implements Runnable {
                     //是否有加密选项，暂缺
                     msgStr = msgTemp;
 
+                    // 如果不存在用户则添加
+                    if ( !users.containsKey(senderIp)) {
+                        User userNew = new User();
+                        userNew.setIp(senderIp);
+                        userNew.setHostName(senderName);
+                        userNew.setGroupName("");
+                        users.put(senderIp, userNew);
+                    }
+
                     // 若只是发送消息，处理消息
                     User user = new User(senderName, "", senderIp, "","receiver");
                     ChatMessage msg = new ChatMessage(senderIp, senderName, msgStr, new Date(), user);

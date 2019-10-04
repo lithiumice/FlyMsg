@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,9 +35,13 @@ import com.vincent.filepicker.activity.AudioPickActivity;
 import com.vincent.filepicker.activity.ImagePickActivity;
 import com.vincent.filepicker.activity.NormalFilePickActivity;
 import com.vincent.filepicker.activity.VideoPickActivity;
+import com.vincent.filepicker.filter.entity.AudioFile;
 import com.vincent.filepicker.filter.entity.ImageFile;
+import com.vincent.filepicker.filter.entity.NormalFile;
+import com.vincent.filepicker.filter.entity.VideoFile;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -71,9 +74,9 @@ import static online.hualin.flymsg.utils.CommonUtils.getLocalIpAddress;
 
 public class ChatActivity extends BaseActivity implements OnClickListener, ReceiveMsgListener
         , MessagesListAdapter.OnMessageClickListener, MessagesListAdapter.OnMessageLongClickListener, MessagesListAdapter.OnLoadMoreListener
-        , DateFormatter.Formatter, PopupMenu.OnMenuItemClickListener {
+        , DateFormatter.Formatter {
     public static final String TAG = "BaseActivity";
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_FILE_BROWSER = 1;
     static final int REQUEST_IMAGE_PHOTO = 2;
     static final int REQUEST_PERMS = 3;
     static final int RECEIVE_IMAGE = 4;
@@ -142,10 +145,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
         initMsgList();
         initView();
         initChatInput();
-        if (shareText!=null){
+        if (shareText != null) {
             chat_input.getInputEditText().setText(shareText);
         }
-        if (sharePath!=null){
+        if (sharePath != null) {
             sendFileByPaths(new String[]{sharePath}, selfName, selfGroup, receiverIp);
 
         }
@@ -189,8 +192,12 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
 
         });
         chat_input.setAttachmentsListener(() -> {
-            filePickIntent("Image");
+//            filePickIntent("Image");
+            checkAndRequirePerms(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    , Manifest.permission.READ_EXTERNAL_STORAGE});
 
+            Intent intent = new Intent(this, FileBrowserActivity.class);
+            startActivityForResult(intent, REQUEST_FILE_BROWSER);
         });
 
         adapter = new MessagesListAdapter<>(selfIp, imageLoader);
@@ -339,13 +346,19 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
                 adapter.clear();
                 makeTextShort("已清除所有消息");
                 break;
+            case R.id.file_browser:
+                Intent intent = new Intent(this, FileBrowserActivity.class);
+                startActivityForResult(intent, REQUEST_FILE_BROWSER);
+                break;
+
             case R.id.select_image:
                 Toasty.warning(this, "Image", Toasty.LENGTH_SHORT).show();
                 filePickIntent("Image");
                 break;
             case R.id.select_audio:
-                Toasty.warning(this, "Audio", Toasty.LENGTH_SHORT).show();
-                filePickIntent("Audio");
+//                Toasty.warning(this, "Audio", Toasty.LENGTH_SHORT).show();
+//                filePickIntent("Audio");
+                Toasty.error(getApplicationContext(), "有bug,已停用", Toasty.LENGTH_LONG).show();
 
                 break;
             case R.id.select_file:
@@ -447,11 +460,54 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
         if (resultCode == RESULT_OK && data != null) {
 
             ArrayList<String> tmpPaths = new ArrayList<>();
+            int constantFalg = 0;
 
             switch (requestCode) {
-                case Constant.REQUEST_CODE_PICK_VIDEO:
-                case Constant.REQUEST_CODE_PICK_FILE:
-                case Constant.REQUEST_CODE_PICK_AUDIO:
+                case Constant.REQUEST_CODE_PICK_VIDEO: {
+
+                    ArrayList<VideoFile> list = data.getParcelableArrayListExtra(Constant.RESULT_PICK_VIDEO);
+                    if (list == null) {
+                        Toasty.warning(getApplicationContext(), "文件为空").show();
+                        return;
+                    }
+                    for (VideoFile file : list) {
+                        tmpPaths.add(file.getPath());
+                    }
+
+                    sendFileByPaths(arrayToString(tmpPaths), selfName, selfGroup, receiverIp);
+                    return;
+
+                }
+                case Constant.REQUEST_CODE_PICK_FILE: {
+
+                    ArrayList<NormalFile> list = data.getParcelableArrayListExtra(Constant.RESULT_PICK_FILE);
+                    if (list == null) {
+                        Toasty.warning(getApplicationContext(), "文件为空").show();
+                        return;
+                    }
+                    for (NormalFile file : list) {
+                        tmpPaths.add(file.getPath());
+                    }
+
+                    sendFileByPaths(arrayToString(tmpPaths), selfName, selfGroup, receiverIp);
+                    return;
+
+                }
+                case Constant.REQUEST_CODE_PICK_AUDIO: {
+
+                    ArrayList<AudioFile> list = data.getParcelableArrayListExtra(Constant.RESULT_PICK_AUDIO);
+                    if (list == null) {
+                        Toasty.warning(getApplicationContext(), "文件为空").show();
+                        return;
+                    }
+                    for (AudioFile file : list) {
+                        tmpPaths.add(file.getPath());
+                    }
+
+                    sendFileByPaths(arrayToString(tmpPaths), selfName, selfGroup, receiverIp);
+                    return;
+
+                }
                 case Constant.REQUEST_CODE_PICK_IMAGE: {
 
                     ArrayList<ImageFile> list = data.getParcelableArrayListExtra(Constant.RESULT_PICK_IMAGE);
@@ -467,6 +523,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
                     return;
 
                 }
+
                 case REQUEST_IMAGE_PHOTO:
                 case REQUEST_CODE_DOC:
                 case REQUEST_CODE_PHOTO: {
@@ -476,6 +533,11 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
                     break;
 
                 }
+                case REQUEST_FILE_BROWSER:
+                    String filePath = data.getStringExtra("FilePath");
+                    sendFileByPaths(new String[]{filePath}, selfName, selfGroup, receiverIp);
+                    break;
+
 //                    tmpPaths = data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS);
 //                    String[] filePathArray = arrayToString(tmpPaths);
 //
@@ -563,32 +625,47 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
 
     }
 
+//    @Override
+//    public boolean onMenuItemClick(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.select_image:
+//                Toasty.warning(this, "Image", Toasty.LENGTH_SHORT).show();
+//                filePickIntent("Image");
+//                break;
+//            case R.id.select_audio:
+//                Toasty.error(getApplicationContext(), "有bug,已停用", Toasty.LENGTH_LONG).show();
+//
+//                break;
+//            case R.id.select_file:
+//                Toasty.warning(this, "File", Toasty.LENGTH_SHORT).show();
+//                filePickIntent("File");
+//
+//                break;
+//            case R.id.select_vedio:
+//                Toasty.warning(this, "Video", Toasty.LENGTH_SHORT).show();
+//                filePickIntent("Video");
+//
+//                break;
+//            default:
+//                break;
+//        }
+//        return false;
+//    }
+
     @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.select_image:
-                Toasty.warning(this, "Image", Toasty.LENGTH_SHORT).show();
-                filePickIntent("Image");
-                break;
-            case R.id.select_audio:
-                Toasty.warning(this, "Audio", Toasty.LENGTH_SHORT).show();
-                filePickIntent("Audio");
-
-                break;
-            case R.id.select_file:
-                Toasty.warning(this, "File", Toasty.LENGTH_SHORT).show();
-                filePickIntent("File");
-
-                break;
-            case R.id.select_vedio:
-                Toasty.warning(this, "Video", Toasty.LENGTH_SHORT).show();
-                filePickIntent("Video");
-
-                break;
-            default:
-                break;
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        if (menu != null) {
+            if (menu.getClass().getSimpleName().equalsIgnoreCase("MenuBuilder")) {
+                try {
+                    Method method = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    method.setAccessible(true);
+                    method.invoke(menu, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        return false;
+        return super.onMenuOpened(featureId, menu);
     }
 }
 

@@ -7,98 +7,42 @@
     android:layout_marginTop="6dp"
     android:layout_marginRight="8dp"
     android:layout_marginLeft="8dp"
-    android:elevation="7dp"
+    android:elevation="10dp"
     android:orientation="vertical"
-    android:background="?android:selectableItemBackground"
+    android:foreground="?android:selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="5dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground">
-
-        <TextView
-            android:id="@+id/sender_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:ellipsize="middle"
-
-            android:drawableStart="@drawable/ic_comment"
-            android:drawableTint="@color/colorPrimaryDark"
-            android:singleLine="true"
-            android:text="name"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3" />
-
-        <TextView
-            android:id="@+id/sender_ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="ip"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintStart_toEndOf="@+id/sender_name"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:background="?android:selectableItemBackground"
+        android:clickable="true">
 
         <TextView
             android:id="@+id/send_msg"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:text="msg"
+            android:background="?android:selectableItemBackground"
+
+            android:layout_margin="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
             app:layout_constraintVertical_bias="0.018" />
 
-        <TextView
-            android:id="@+id/send_time"
-            android:layout_width="wrap_content"
-            android:layout_height="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="4dp"
-            android:text="时间"
 
-            android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/sender_ip"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.461" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="left" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="29dp" />
 
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/colorAccent"
+            android:layout_height="1dp"
+
+            android:background="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -106,28 +50,101 @@
             app:layout_constraintTop_toBottomOf="@+id/send_msg"
             app:layout_constraintVertical_bias="0.32" />
 
-        <ImageView
-            android:id="@+id/delete_one"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_delete"
-            android:drawableTint="@color/colorPrimaryDark"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
 
-            app:layout_constraintEnd_toEndOf="@+id/barrier"
-            app:layout_constraintTop_toBottomOf="@+id/view2" />
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/send_msg">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_image"
+                android:layout_margin="4dp"
+                android:id="@+id/his_img"
+                android:tint="@color/colorPrimaryDark"
+                />
+            <LinearLayout
+                android:layout_toRightOf="@id/his_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
 
-        <ImageView
-            android:id="@+id/share_one"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_share"
-            android:drawableTint="@color/colorPrimaryDark"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/sender_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:clickable="true"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:text="name"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/delete_one"
-            app:layout_constraintTop_toBottomOf="@+id/view2" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/send_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="true"
+                        android:text="时间"
+                        android:textSize="8sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/sender_ip" />
+
+                    <TextView
+                        android:id="@+id/sender_ip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="ip"
+                        android:textSize="8sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/delete_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:padding="5dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_delete_sweep_black_24dp"
+                android:tint="@color/colorPrimaryDark"
+                />
+
+            <ImageView
+                android:id="@+id/share_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/delete_one"
+                android:layout_marginStart="0dp"
+                android:layout_marginLeft="-68dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+
+                android:padding="5dp"
+                android:src="@drawable/ic_share"
+                android:tint="@color/colorPrimaryDark"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/delete_one"
+                app:layout_constraintTop_toBottomOf="@+id/view2" />
+        </RelativeLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

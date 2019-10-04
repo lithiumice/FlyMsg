@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
         }
     };
-
+    private TextView poetryTitle;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
 
@@ -199,11 +199,14 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     private void initView() {
         hostIp = getLocalIpAddress();
-
         fab = findViewById(R.id.fab_main);
+        fab.hide();
 
         toolbar = findViewById(R.id.toolbar);
+        setToolbar(toolbar, 0);
+
         mainTitle = findViewById(R.id.main_titile);
+        poetryTitle = findViewById(R.id.poetry_title);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -211,7 +214,8 @@ public class MainActivity extends BaseActivity implements OnClickListener
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        setToolbar(toolbar, 0);
+
+        sendRequestOkhttpPoetry();
 
     }
 
@@ -285,8 +289,8 @@ public class MainActivity extends BaseActivity implements OnClickListener
             mUserList.add(user);
         }
 
-        getSupportActionBar().setTitle("当前在线" + currentUsers.size() + "个用户");
-//        mainTitle.setText("当前在线" + currentUsers.size() + "个用户");
+//        getSupportActionBar().setTitle("当前在线" + currentUsers.size() + "个用户");
+        mainTitle.setText("当前在线" + currentUsers.size() + "个用户");
     }
 
     private View makeTabView(int position) {
@@ -299,7 +303,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
         return tabView;
     }
 
-    public void sendRequestOkhttp() {
+    public void sendRequestOkhttpPoetry() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -324,16 +328,28 @@ public class MainActivity extends BaseActivity implements OnClickListener
                     poetryOne.setContent(poetryGson.getContent());
                     poetryDao.insert(poetryOne);
 
-                    Log.d(TAG, poetryGson.getContent());
+                    String poetry = poetryGson.getContent();
+                    Log.d(TAG, poetry);
 
                     MainActivity.getCurrentActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-//                            poetryTitle.setText(poetryGson.getContent());
+                            poetryTitle.setText(poetry);
+
                         }
                     });
+                    pref.edit().putString("poetry", poetry).apply();
                 } catch (Exception e) {
                     e.printStackTrace();
+
+                    String poetryStr = pref.getString("poetry", "无言独上西楼");
+                    MainActivity.getCurrentActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            getSupportActionBar().setSubtitle(poetryStr);
+                            poetryTitle.setText(poetryStr);
+                        }
+                    });
                 }
             }
         }).start();
@@ -374,9 +390,9 @@ public class MainActivity extends BaseActivity implements OnClickListener
         getMenuInflater().inflate(R.menu.toolbar, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setIconified(false);
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setQueryHint("search");
+//        searchView.setIconified(false);
+//        searchView.setSubmitButtonEnabled(true);
+//        searchView.setQueryHint("search");
 
         return true;
     }
@@ -403,13 +419,17 @@ public class MainActivity extends BaseActivity implements OnClickListener
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
-            case R.id.about:
-                Intent intent = new Intent(this, AboutActivity.class);
+            case R.id.setting_menu:
+                Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.intro:
-                Intent intent2 = new Intent(this, IntroActivity.class);
+            case R.id.about:
+                Intent intent2 = new Intent(this, AboutActivity.class);
                 startActivity(intent2);
+                break;
+            case R.id.intro:
+                Intent intent3 = new Intent(this, IntroActivity.class);
+                startActivity(intent3);
                 break;
         }
         return true;

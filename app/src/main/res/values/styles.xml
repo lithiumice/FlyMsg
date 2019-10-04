@@ -10,7 +10,9 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>    <!--状态栏为透明,如果设置为false，则没有黑色条盖住，见下图对比-->
         <item name="colorSecondary">@color/colorAccent</item>
+        <item name="android:windowTitleSize">10sp</item>
         <item name="android:textSize">15sp</item>
+        <item name="materialButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
     </style>
 

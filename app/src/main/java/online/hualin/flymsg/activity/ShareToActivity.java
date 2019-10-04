@@ -69,6 +69,8 @@ public class ShareToActivity extends BaseActivity {
         String action = intent.getAction();
         String type = intent.getType();
 
+        Log.d("share",type);
+
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
                 String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -77,10 +79,13 @@ public class ShareToActivity extends BaseActivity {
                     this.shareText = sharedText;
                 }
             } else if (type.startsWith("image/")) {
-                Uri uri=intent.getData();
-                String filePath = getRealPathFromUri(getContext(),uri);
-                Log.d("share", filePath);
-                this.sharePath = filePath;
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                Uri uri=intent.getData();
+//                Log.d("share",intent.getDataString());
+
+//                String filePath = getRealPathFromUri(getContext(),uri);
+//                Log.d("share", filePath);
+//                this.sharePath = filePath;
             }
         }
 

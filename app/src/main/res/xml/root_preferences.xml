@@ -1,34 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/root_title">
 
 
     <PreferenceCategory android:title="基本设置">
+        <EditTextPreference
+            android:defaultValue="FLYMSG"
+            android:icon="@drawable/ic_verified_user_black_24dp"
+            android:key="DeviceName"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="该设置需要重启软件才能生效"
 
+            android:title="用户名" />
+        <EditTextPreference
+            android:defaultValue="WORKGROUP"
+            android:icon="@drawable/ic_group"
+            android:key="GroupName"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="该设置需要重启软件才能生效"
+            android:title="组名" />
     </PreferenceCategory>
-    <EditTextPreference
-        android:defaultValue="FLYMSG"
-        android:key="DeviceName"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:summary="该设置需要重启软件才能生效"
 
-        android:title="用户名" />
-    <EditTextPreference
-        android:defaultValue="WORKGROUP"
-        android:key="GroupName"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:summary="该设置需要重启软件才能生效"
-        android:title="组名" />
 
     <PreferenceCategory android:title="额外设置">
+        <ListPreference
+            android:defaultValue="/mnt/sdcard/Download"
+            android:dialogTitle="下载位置"
+            android:entries="@array/settings_download_preference_titles"
+            android:entryValues="@array/settings_list_preference_values"
+            android:key="download_pref_list"
+            android:negativeButtonText="@null"
+            android:icon="@drawable/ic_insert_drive_file_black_24dp"
+            android:positiveButtonText="@null"
+            android:summary="/mnt/sdcard/Download"
+            android:title="下载位置" />
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_notifications_black_24dp"
+            android:key="switch_notify"
+            android:title="打开通知音" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_restaurant_menu_black_24dp"
+            android:key="AutoReceive"
+            android:title="自动接受文件" />
     </PreferenceCategory>
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="switch_notify"
-        android:title="打开通知音" />
+
 </PreferenceScreen>

@@ -20,7 +20,7 @@
         android:layout_width="94dp"
         android:layout_height="93dp"
         android:layout_margin="15dp"
-        android:src="@drawable/profile"
+        android:src="@drawable/avatar"
         app:civ_border_color="@color/colorPrimaryDark"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -58,6 +58,14 @@
             android:switchMinWidth="15dp"
             android:textOff="closed"
             android:textOn="opened" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/warm_grey"
+            android:layout_marginLeft="7dp"
+            android:text="switch notification" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

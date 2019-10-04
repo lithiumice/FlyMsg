@@ -31,8 +31,13 @@ public class SettingFragment extends PreferenceFragmentCompat implements Prefere
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         findPreference("switch_notify").setOnPreferenceChangeListener(this);
+        findPreference("AutoReceive").setOnPreferenceChangeListener(this);
+        findPreference("download_pref_list").setOnPreferenceChangeListener(this);
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         onPreferenceChange(findPreference("switch_notify"), preferences.getBoolean("switch_notify", true));
+        onPreferenceChange(findPreference("AutoReceive"), preferences.getBoolean("AutoReceive", true));
+        onPreferenceChange(findPreference("download_pref_list"), preferences.getString("download_pref_list", "/mnt/sdcard/Download"));
     }
 
     @Override
@@ -41,6 +46,9 @@ public class SettingFragment extends PreferenceFragmentCompat implements Prefere
             switch (preference.getKey()) {
                 case "switch_notify":
                     Snackbar.make(getListView(), "switch notify", Snackbar.LENGTH_SHORT).show();
+                    break;
+                case "AutoReceive":
+                    Snackbar.make(getListView(), "switch auto receive", Snackbar.LENGTH_SHORT).show();
                     break;
             }
             return true;

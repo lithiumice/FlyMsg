@@ -4,6 +4,9 @@ import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
 
+import com.speedystone.greendaodemo.db.ChatHistoryDao;
+import com.speedystone.greendaodemo.db.DaoSession;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -13,15 +16,19 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 import es.dmoral.toasty.Toasty;
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
 import online.hualin.flymsg.activity.BaseActivity;
+import online.hualin.flymsg.db.ChatHistory;
 import online.hualin.flymsg.utils.CommonUtils;
 import online.hualin.flymsg.utils.IpMessageConst;
 import online.hualin.flymsg.utils.IpMessageProtocol;
 import online.hualin.flymsg.utils.UsedConst;
+
+import static online.hualin.flymsg.App.getApplication;
 
 public class NetTcpFileReceiveThread implements Runnable {
     private final static String TAG = "NetTcpFileReceiveThread";
@@ -45,7 +52,10 @@ public class NetTcpFileReceiveThread implements Runnable {
 
         selfName = App.getDeviceName();
         selfGroup = App.getGroupName();
-        savePath = Environment.getExternalStorageDirectory().getAbsoluteFile();
+        String savePathString=App.getPref().getString("download_pref_list","/mnt/sdcard/Download");
+        savePath=new File(savePathString);
+
+//        savePath = Environment.getExternalStorageDirectory().getAbsoluteFile();
 
         Log.d(TAG, "SavePath:" + savePath);
 //		savePath=App.getContext().getExternalFilesDir("file");
@@ -122,7 +132,7 @@ public class NetTcpFileReceiveThread implements Runnable {
                     int sendedPer = (int) (sended * 100 / total);    //接收百分比
                     if (temp != sendedPer) {
                         //每增加一个百分比，发送一个message
-                        int[] msgObj = {i, sendedPer};
+                        String[] msgObj = {fileInfo[1], sendedPer+""};
                         BaseActivity.sendMessage(UsedConst.FILERECEIVEINFO, msgObj);
 
 //						EventBus.getDefault().post(sendedPer);
@@ -132,11 +142,12 @@ public class NetTcpFileReceiveThread implements Runnable {
                 }
 
                 Log.i(TAG, "第" + (i + 1) + "个文件接收成功，文件名为" + fileInfo[1]);
-                int[] success = {i + 1, fileInfos.length};
-                Message msg4success = new Message();
-                msg4success.what = UsedConst.FILERECEIVESUCCESS;
-                msg4success.obj = success;
-                BaseActivity.sendMessage(msg4success);
+//                int[] success = {i + 1, fileInfos.length};
+//                Message msg4success = new Message();
+//                msg4success.what = UsedConst.FILERECEIVESUCCESS;
+//                msg4success.obj = success;
+                BaseActivity.sendMessage(UsedConst.FILERECEIVESUCCESS,fileInfo[1]+"");
+
 
             } catch (UnsupportedEncodingException e) {
 
