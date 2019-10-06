@@ -135,17 +135,11 @@ public class NetTcpFileReceiveThread implements Runnable {
                         String[] msgObj = {fileInfo[1], sendedPer+""};
                         BaseActivity.sendMessage(UsedConst.FILERECEIVEINFO, msgObj);
 
-//						EventBus.getDefault().post(sendedPer);
-
                         temp = sendedPer;
                     }
                 }
 
                 Log.i(TAG, "第" + (i + 1) + "个文件接收成功，文件名为" + fileInfo[1]);
-//                int[] success = {i + 1, fileInfos.length};
-//                Message msg4success = new Message();
-//                msg4success.what = UsedConst.FILERECEIVESUCCESS;
-//                msg4success.obj = success;
                 BaseActivity.sendMessage(UsedConst.FILERECEIVESUCCESS,fileInfo[1]+"");
 
 

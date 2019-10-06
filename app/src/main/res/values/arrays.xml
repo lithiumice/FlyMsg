@@ -2,7 +2,7 @@
 <resources>
     <string-array name="settings_download_preference_titles">
         <item>/mnt/sdcard/Download(默认)</item>
-        <item>/mnt/sdcard/Android/data/online.hualin.flymsg/file</item>
+        <item>/mnt/sdcard/Android/data/online.hualin.flymsg/file(卸载软件后将丢失所以数据)</item>
     </string-array>
     <string-array name="settings_list_preference_values">
         <item>/mnt/sdcard/Download</item>

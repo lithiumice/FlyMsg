@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.speedystone.greendaodemo.db.ChatHistoryDao;
 import com.speedystone.greendaodemo.db.DaoSession;
 
@@ -34,32 +37,14 @@ import online.hualin.flymsg.R;
 import online.hualin.flymsg.adapter.ChatHisAdapter;
 import online.hualin.flymsg.db.ChatHistory;
 import online.hualin.flymsg.utils.CommonUtils;
+import online.hualin.flymsg.utils.ViewUtils;
 import online.hualin.flymsg.view.ItemTouchHelperCallback;
 
 import static online.hualin.flymsg.App.getApplication;
 
 public class HistoryFrag extends Fragment {
-    private RecyclerView recyclerView;
-    private View view;
     private static HistoryFrag instance;
-    private ChatHisAdapter adapter;
-    private List<ChatHistory> chatHistories = new ArrayList<>();
-    private Context context;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private DaoSession daoSession = ((App) getApplication()).getDaoSession();
-    private FloatingActionButton fab;
-    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (dy > 0) {
-                fab.hide();
-            } else {
-                fab.show();
-            }
-        }
-    };
-    private RecyclerView.OnTouchListener onTouchListener = new RecyclerView.OnTouchListener() {
+    public RecyclerView.OnTouchListener onTouchListener = new RecyclerView.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             switch (motionEvent.getAction()) {
@@ -80,14 +65,39 @@ public class HistoryFrag extends Fragment {
             return false;
         }
     };
+    private RecyclerView recyclerView;
+    private View view;
+    private ChatHisAdapter adapter;
+    private List<ChatHistory> chatHistories;
+    private Context context;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private DaoSession daoSession = ((App) getApplication()).getDaoSession();
+    private FloatingActionButton fab;
+    private SearchView searchView;
+    private ChatHistoryDao chatHistoryDao;
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (dy > 0) {
+                fab.hide();
+                ViewUtils.closeInputBoard(getActivity());
+            } else {
+                fab.show();
+            }
+        }
+    };
+
+    public static void restart() {
+        instance.onStart();
+    }
 
     @Override
     public void onStart() {
         super.onStart();
-        setViewNums();
-        instance=this;
+        instance = this;
 
-        ChatHistoryDao chatHistoryDao = daoSession.getChatHistoryDao();
+        chatHistoryDao = daoSession.getChatHistoryDao();
         chatHistories = chatHistoryDao.loadAll();
         if (chatHistories.size() == 0) {
             ImageView emptyGlass = view.findViewById(R.id.empty_glass);
@@ -97,8 +107,10 @@ public class HistoryFrag extends Fragment {
             emptyGlass.setVisibility(View.GONE);
         }
 
-        adapter = new ChatHisAdapter(chatHistories, onTouchListener, view);
-        recyclerView.setAdapter(adapter);
+//        adapter = new ChatHisAdapter(chatHistories, onTouchListener, view);
+//        recyclerView.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
+        adapter.setItems(chatHistories);
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
@@ -109,10 +121,6 @@ public class HistoryFrag extends Fragment {
     private void deleteAll() {
         ChatHistoryDao chatHistoryDao = daoSession.getChatHistoryDao();
         chatHistoryDao.deleteAll();
-    }
-
-    public static void restart(){
-        instance.onStart();
     }
 
     private void setViewNums() {
@@ -135,6 +143,36 @@ public class HistoryFrag extends Fragment {
         view = inflater.inflate(R.layout.history_frag, container, false);
         recyclerView = view.findViewById(R.id.his_recycle);
 
+//        chatHistories=new ArrayList<>();
+        adapter = new ChatHisAdapter(chatHistories, onTouchListener, view);
+        recyclerView.setAdapter(adapter);
+
+        searchView = view.findViewById(R.id.search_his);
+        searchView.onActionViewExpanded();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ViewUtils.closeInputBoard(getActivity());
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!TextUtils.isEmpty(newText)) {
+                    chatHistories = chatHistoryDao.queryBuilder()
+                            .whereOr(ChatHistoryDao.Properties.SendMsg.like("%" + newText + "%"), ChatHistoryDao.Properties.SenderName.like("%" + newText + "%"))
+                            .orderAsc(ChatHistoryDao.Properties.SenderName)
+                            .list();
+
+                } else {
+                    chatHistories = chatHistoryDao.loadAll();
+                }
+                adapter.setItems(chatHistories);
+                return false;
+            }
+        });
+
         context = getActivity();
         fab = getActivity().findViewById(R.id.fab_main);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -148,9 +186,10 @@ public class HistoryFrag extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 deleteAll();
-//                                chatHistories.clear();
-//                                adapter.notifyDataSetChanged();
-                                restart();
+                                chatHistories.clear();
+                                adapter.notifyDataSetChanged();
+//                                restart();
+                                Snackbar.make(view, "已删除所有记录", Snackbar.LENGTH_SHORT).show();
 
                             }
                         })
@@ -167,8 +206,10 @@ public class HistoryFrag extends Fragment {
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
+
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+//        recyclerView.setLayoutManager(linearLayoutManager);
+        setViewNums();
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;

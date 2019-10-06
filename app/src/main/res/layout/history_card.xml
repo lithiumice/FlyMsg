@@ -56,14 +56,10 @@
 
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/send_msg">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_image"
-                android:layout_margin="4dp"
-                android:id="@+id/his_img"
-                android:tint="@color/colorPrimaryDark"
-                />
+
+            <include layout="@layout/circle_img_text"
+                android:id="@+id/his_img"/>
+
             <LinearLayout
                 android:layout_toRightOf="@id/his_img"
                 android:layout_width="wrap_content"
@@ -80,7 +76,7 @@
                     android:ellipsize="middle"
                     android:singleLine="true"
                     android:text="name"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -95,7 +91,7 @@
                         android:background="?android:selectableItemBackground"
                         android:clickable="true"
                         android:text="时间"
-                        android:textSize="8sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/sender_ip" />
 
@@ -108,7 +104,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="ip"
-                        android:textSize="8sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -142,8 +138,7 @@
                 android:src="@drawable/ic_share"
                 android:tint="@color/colorPrimaryDark"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/delete_one"
-                app:layout_constraintTop_toBottomOf="@+id/view2" />
+                app:layout_constraintEnd_toStartOf="@+id/delete_one"/>
         </RelativeLayout>
     </LinearLayout>
 

@@ -1,8 +1,10 @@
 package online.hualin.flymsg.activity;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.StrictMode;
@@ -20,8 +22,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -34,6 +39,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jaeger.library.StatusBarUtil;
 import com.speedystone.greendaodemo.db.DaoSession;
 import com.speedystone.greendaodemo.db.PoetryDao;
 
@@ -69,6 +75,7 @@ import static online.hualin.flymsg.utils.CommonUtils.isWifiActive;
 public class MainActivity extends BaseActivity implements OnClickListener
         , NavigationView.OnNavigationItemSelectedListener {
     public static final String TAG = "BaseActivity";
+    private static final int REQUEST_PERMS = 1;
     public static String hostIp;
     public List<User> mUserList = new ArrayList<>();
     private MainContentAdapter pagerAdapter;
@@ -116,25 +123,12 @@ public class MainActivity extends BaseActivity implements OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
+        StatusBarUtil.setTranslucent(this);
 
         if (!NotificationUtils.isNotificationEnabled(getApplicationContext())) {
             NotificationUtils.openNotificationSetting();
         }
-
-        if (Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-        if (!isWifiActive()) {    //若wifi没有打开，提示
-            Snackbar.make(getWindow().getDecorView(), "没有WiFi连接", Snackbar.LENGTH_LONG)
-                    .setAction("Get it", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                        }
-                    }).show();
-        }
-
         pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         boolean isFirstLogin = pref.getBoolean("FirstUse", true);
@@ -144,6 +138,35 @@ public class MainActivity extends BaseActivity implements OnClickListener
             editor.putString("DeviceName", android.os.Build.DEVICE);
             editor.putString("DeviceGroup", "WORKGROUP");
             editor.apply();
+
+            checkAndRequirePerms(new String[]{Manifest.permission_group.STORAGE});
+
+        }
+
+//            new AlertDialog.Builder(this)
+//                    .setTitle("提示")
+//                    .setMessage("请在关于页面获取更多消息")
+//                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                        }
+//                    }).create().show();
+//        }
+//
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+//        {
+//            checkAndRequirePerms(new String[]{Manifest.permission_group.STORAGE});
+//        }
+
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        if (!isWifiActive()) {    //若wifi没有打开，提示
+            Snackbar.make(getWindow().getDecorView(), "没有WiFi连接", Snackbar.LENGTH_LONG)
+                    .setAction("OK", v->{}).show();
         }
 
         iniNet();
@@ -151,6 +174,29 @@ public class MainActivity extends BaseActivity implements OnClickListener
         initNav();
         initTab();
 
+    }
+
+    public void checkAndRequirePerms(String[] permList) {
+        for (String perm : permList) {
+            if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{perm}, REQUEST_PERMS);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMS:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toasty.error(getApplicationContext(),"已打开权限",Toasty.LENGTH_SHORT).show();
+                } else {
+                    Toasty.error(getApplicationContext(),"为正常使用你需要打开必须的权限",Toasty.LENGTH_SHORT).show();
+//                    finish();
+                }
+                break;
+            default:
+        }
     }
 
     @Override
@@ -331,7 +377,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
                     String poetry = poetryGson.getContent();
                     Log.d(TAG, poetry);
 
-                    MainActivity.getCurrentActivity().runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             poetryTitle.setText(poetry);
@@ -343,7 +389,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
                     e.printStackTrace();
 
                     String poetryStr = pref.getString("poetry", "无言独上西楼");
-                    MainActivity.getCurrentActivity().runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
 //                            getSupportActionBar().setSubtitle(poetryStr);
@@ -388,8 +434,8 @@ public class MainActivity extends BaseActivity implements OnClickListener
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+//        MenuItem searchItem = menu.findItem(R.id.menu_search);
+//        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 //        searchView.setIconified(false);
 //        searchView.setSubmitButtonEnabled(true);
 //        searchView.setQueryHint("search");
@@ -494,6 +540,6 @@ public class MainActivity extends BaseActivity implements OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 }

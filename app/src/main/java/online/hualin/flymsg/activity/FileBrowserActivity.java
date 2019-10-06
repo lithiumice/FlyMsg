@@ -1,14 +1,14 @@
 package online.hualin.flymsg.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,38 +23,57 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import java.io.File;
 import java.util.ArrayList;
 
+import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
 import online.hualin.flymsg.adapter.FileBrowseAdapter;
 
-public class FileBrowserActivity extends AppCompatActivity {
+public class FileBrowserActivity extends LiteBaseActivity implements View.OnClickListener {
 
     private String root;
     private String currentPath;
 
-    private ArrayList<String> targets=new ArrayList<>();
-    private ArrayList<String> paths =new ArrayList<>();
+    private ArrayList<String> targets = new ArrayList<>();
+    private ArrayList<String> paths = new ArrayList<>();
 
     private File targetFile;
+    private SharedPreferences pref;
+    private CheckBox checkBox;
+    private String downloadRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_browser);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        checkBox = findViewById(R.id.is_remmember_path);
 //        setToolbar(toolbar, 1);
+        pref = App.getPref();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Button doneButton=findViewById(R.id.done_button);
+        Button saveButton = findViewById(R.id.save_rem_path);
+        saveButton.setOnClickListener(this);
+        Button doneButton = findViewById(R.id.done_button);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        root = Environment.getExternalStorageDirectory().getAbsoluteFile().getPath();
-//        root = "/";
+
+        boolean isRememberPath = pref.getBoolean("RemmemberPath", false);
+        checkBox.setChecked(isRememberPath);
+
+        downloadRoot = Environment.getExternalStorageDirectory().getAbsoluteFile().getPath();
+
+        if (isRememberPath) {
+            root = App.getPref().getString("LastPath", downloadRoot);
+        } else {
+            root = downloadRoot;
+        }
+
+
         currentPath = root;
 
         targetFile = null;
@@ -86,15 +105,15 @@ public class FileBrowserActivity extends AppCompatActivity {
     public void showDir(String targetDir) {
         setCurrentPathText(currentPath);
 
-        targets=new ArrayList<>();
-        paths=new ArrayList<>();
+        targets = new ArrayList<>();
+        paths = new ArrayList<>();
 
         File f = new File(targetDir);
         File[] directoryContents = f.listFiles();
 
-        if (!targetDir.equals(root)) {
-            targets.add(root);
-            paths.add(root);
+        if (!targetDir.equals(downloadRoot)) {
+            targets.add(downloadRoot);
+            paths.add(downloadRoot);
             targets.add("../");
             paths.add(f.getParent());
         }
@@ -115,10 +134,8 @@ public class FileBrowserActivity extends AppCompatActivity {
         FileBrowseAdapter fileBrowseAdapter = new FileBrowseAdapter(targets);
         fileBrowseAdapter.openLoadAnimation();
         recyclerView.setAdapter(fileBrowseAdapter);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-//        ArrayAdapter<String> arrayAdapter=new RecyclerView.Adapter<String>(this,android.R.layout.simple_list_item_1,targets);
-//        recyclerView.setAdapter(arrayAdapter);
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
 
                                                 @Override
@@ -127,6 +144,14 @@ public class FileBrowserActivity extends AppCompatActivity {
                                                     File f = new File(paths.get(position));
                                                     if (f.isFile()) {
                                                         targetFile = f;
+
+                                                        if (checkBox.isChecked()) {
+                                                            pref.edit().putBoolean("RemmemberPath", true).apply();
+                                                            pref.edit().putString("LastPath", f.getParent()).apply();
+                                                        } else {
+                                                            pref.edit().putBoolean("RemmemberPath", false).apply();
+                                                        }
+
                                                         returnTarget();
                                                     } else {
                                                         if (f.canRead()) {
@@ -139,6 +164,7 @@ public class FileBrowserActivity extends AppCompatActivity {
                                             }
         );
     }
+
     public void setToolbar(Toolbar toolbar, int indicator) {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -165,8 +191,19 @@ public class FileBrowserActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        finish();
+        if (item.getItemId()==android.R.id.home){
+            String f=(String) paths.get(1);
+            if (new File(f).canRead())
+                showDir(f);
+        }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.save_rem_path) {
+            pref.edit().putBoolean("RemmemberPath", checkBox.isChecked()).apply();
+
+        }
+    }
 }

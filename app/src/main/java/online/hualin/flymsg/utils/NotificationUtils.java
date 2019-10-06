@@ -54,7 +54,7 @@ public class NotificationUtils {
     }
 
     public static void openNotificationSetting() {
-        final Context context= App.getContext();
+        final Context context = App.getContext();
         AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setTitle("提示")
                 .setMessage("请在“通知”中打开通知权限")

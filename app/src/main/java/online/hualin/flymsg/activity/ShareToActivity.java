@@ -2,7 +2,6 @@ package online.hualin.flymsg.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
@@ -25,7 +23,6 @@ import online.hualin.flymsg.adapter.UserAdapter;
 import online.hualin.flymsg.data.User;
 
 import static online.hualin.flymsg.App.getContext;
-import static online.hualin.flymsg.utils.RealPathFromUriUtils.getRealPathFromUri;
 
 public class ShareToActivity extends BaseActivity {
     public static String hostIp;
@@ -46,8 +43,8 @@ public class ShareToActivity extends BaseActivity {
         setContentView(R.layout.activity_share_to);
         handleShare();
 
-        EventBus.getDefault().register(this);
-        EventBus.getDefault().post("refreshUserList");
+//        EventBus.getDefault().register(this);
+//        EventBus.getDefault().post("refreshUserList");
 
         initView();
 
@@ -66,6 +63,7 @@ public class ShareToActivity extends BaseActivity {
 
     private void handleShare() {
         Intent intent = getIntent();
+        Log.d("share to",intent.toString());
         String action = intent.getAction();
         String type = intent.getType();
 
@@ -108,7 +106,7 @@ public class ShareToActivity extends BaseActivity {
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-                    EventBus.getDefault().post("refreshUserList");
+//                    EventBus.getDefault().post("refreshUserList");
                     swipeRefreshLayout.setRefreshing(false);
                 }
         );
@@ -140,6 +138,6 @@ public class ShareToActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 }

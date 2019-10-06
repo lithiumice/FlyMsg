@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
+//apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 29
@@ -17,18 +18,51 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    signingConfigs{
+        config{
+            storeFile file('/home/lithium/Downloads/lithiumice.keystore')
+            storePassword '135hualin'
+            keyAlias 'lithiumice.keystore'
+            keyPassword '135hualin'
+        }
+        debug {
+            storeFile file('/home/lithium/Downloads/lithiumice.keystore')
+            storePassword '135hualin'
+            keyAlias = 'lithiumice.keystore'
+            keyPassword '135hualin'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 
 }
 greendao {
-    schemaVersion 3 //数据库版本号
+    schemaVersion 4 //数据库版本号
     daoPackage 'com.speedystone.greendaodemo.db'// 设置DaoMaster、DaoSession、Dao 包名
     targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
+}
+//publish {
+//    groupId = 'com.github.lithiumice'
+//    artifactId = 'flymsg'
+//    publishVersion = '0.1'
+//    desc = 'FlyMsg'
+//    licences = ['Apache-2.0']
+//    uploadName = 'FlyMsg'
+//    website = 'https://github.com/lithiumice/flymsg.git'
+//}
+ext {
+    supportVersion = '27.1.1'
+    picassoVersion = '2.5.2'
+    circleImageViewVersion = '2.2.0'
+    shapeImageViewVersion = '0.9.3'
+    circleindicatorVersion = '1.2.2@aar'
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -69,4 +103,5 @@ dependencies {
     api 'com.google.dagger:dagger:2.24'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
+    implementation 'com.jaeger.statusbarutil:library:1.5.1'
 }

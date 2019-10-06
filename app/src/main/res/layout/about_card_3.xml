@@ -20,12 +20,38 @@
             android:layout_gravity="center_vertical"
             android:background="?android:selectableItemBackground"
             android:clickable="true"
-            android:drawableStart="@drawable/ic_tag"
+            android:drawableStart="@drawable/ic_mail_secondary"
             android:drawableTint="@color/black"
             android:drawablePadding="@dimen/dimen_common"
             android:gravity="center_vertical"
             android:padding="@dimen/dimen_common"
             android:text="debug版本,作者有空再完善^_^"
+            android:textStyle="italic" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?android:selectableItemBackground"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_info_outline_black_24dp"
+            android:drawableTint="@color/black"
+            android:drawablePadding="@dimen/dimen_common"
+            android:gravity="center_vertical"
+            android:padding="@dimen/dimen_common"
+            android:text="前往 http://hualin.online 获取更多消息"
+            android:textStyle="italic" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?android:selectableItemBackground"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_hourglass_empty_black_24dp"
+            android:drawableTint="@color/black"
+            android:drawablePadding="@dimen/dimen_common"
+            android:gravity="center_vertical"
+            android:padding="@dimen/dimen_common"
+            android:text="在 http://www.ipmsg.org.cn/ 下载飞鸽传书PC MAC IOS LINUX端软件或者其他任何使用ipmsg协议的软件,即可得到全平台传输的超能力"
             android:textStyle="italic" />
 
 

@@ -14,14 +14,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
 
         android:layout_width="match_parent"
-        android:layout_height="102dp"
+        android:layout_height="100dp"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_image"
             android:layout_width="87dp"
             android:layout_height="86dp"
-            android:layout_margin="15dp"
+            android:layout_margin="6dp"
             android:src="@drawable/profile"
             app:civ_border_color="@color/colorPrimaryDark"
             app:civ_border_width="2dp"
@@ -36,10 +36,9 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
 
+            android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/unread_msg"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="@+id/unread_msg">
 
 
@@ -66,6 +65,7 @@
                 android:textSize="18sp" />
 
         </FrameLayout>
+
         <TextView
             android:id="@+id/child_name"
             android:layout_width="wrap_content"
@@ -99,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="120dp" />
+            app:layout_constraintGuide_begin="102dp" />
 
         <TextView
             android:id="@+id/group_name"
@@ -117,13 +117,13 @@
 
         <TextView
             android:id="@+id/unread_msg"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:text="未读消息..."
             android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.083"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.826" />
@@ -133,7 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="375dp" />
+            app:layout_constraintGuide_begin="368dp" />
 
         <View
             android:id="@+id/view"

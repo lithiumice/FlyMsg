@@ -35,5 +35,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_delete"
-        android:visibility="invisible" />
+        android:visibility="visible"
+        android:foregroundTint="@color/white"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

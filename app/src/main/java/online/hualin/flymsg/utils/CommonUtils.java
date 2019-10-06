@@ -124,13 +124,6 @@ public class CommonUtils {
     }
 
 
-    public static void closeInputBoard(Activity activity) {
-
-        ((InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(activity
-                        .getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-    }
 
     public static boolean isForeground(Context context, String className) {
         if (context == null || TextUtils.isEmpty(className)) {

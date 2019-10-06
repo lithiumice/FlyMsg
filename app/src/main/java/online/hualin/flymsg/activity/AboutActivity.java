@@ -22,17 +22,20 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jaeger.library.StatusBarUtil;
 
 import online.hualin.flymsg.Constant;
 import online.hualin.flymsg.R;
 import online.hualin.flymsg.utils.CommonUtils;
 
-public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
+public class AboutActivity extends LiteBaseActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+//        StatusBarUtil.setTransparent(this);
+
         Toolbar toolbar = findViewById(R.id.toolbar_about);
         setSupportActionBar(toolbar);
 

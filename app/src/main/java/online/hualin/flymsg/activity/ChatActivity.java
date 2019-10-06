@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -22,6 +23,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
+import com.jaeger.library.StatusBarUtil;
 import com.speedystone.greendaodemo.db.ChatHistoryDao;
 import com.speedystone.greendaodemo.db.DaoSession;
 import com.stfalcon.chatkit.commons.ImageLoader;
@@ -44,10 +47,12 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
@@ -72,8 +77,8 @@ import static droidninja.filepicker.FilePickerConst.REQUEST_CODE_PHOTO;
 import static online.hualin.flymsg.utils.CommonUtils.BitMapToString;
 import static online.hualin.flymsg.utils.CommonUtils.getLocalIpAddress;
 
-public class ChatActivity extends BaseActivity implements OnClickListener, ReceiveMsgListener
-        , MessagesListAdapter.OnMessageClickListener, MessagesListAdapter.OnMessageLongClickListener, MessagesListAdapter.OnLoadMoreListener
+public class ChatActivity extends BaseActivity implements ReceiveMsgListener
+        , MessagesListAdapter.SelectionListener
         , DateFormatter.Formatter {
     public static final String TAG = "BaseActivity";
     static final int REQUEST_FILE_BROWSER = 1;
@@ -83,13 +88,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
     static final int RECEIVE_StrMsg = 5;
     ImageLoader imageLoader = (ImageView imageView, @Nullable String url, @Nullable Object payload) -> {
         {
-//            if (url == "receiver") {
-//                Glide.with(ChatActivity.this).load(BitmapFactory.decodeResource(res, R.drawable.ic_1)).into(imageView);
-//
-//            } else if (url == "sender") {
-//                Glide.with(ChatActivity.this).load(BitmapFactory.decodeResource(res, R.drawable.ic_2)).into(imageView);
-//
-//            }
+                Glide.with(ChatActivity.this).load(BitmapFactory.decodeResource(getResources(), R.drawable.ic_2)).into(imageView);
         }
     };
     private ImageView chat_item_head;    //头像
@@ -121,13 +120,15 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
     private String shareText = "";
     private String sharePath = "";
 
+    private Menu menu;
+    private int selectionCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
+//        StatusBarUtil.setTransparent(this);
         deviceName = android.os.Build.DEVICE;
         res = getResources();
 
@@ -185,14 +186,11 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
             String msgStr = chat_input.getInputEditText().getText().toString().trim();
             sendAndAddMessage(msgStr);
             adapter.addToStart(addMessage(input.toString(), selfIp, selfName, "sender"), true);
-
             insertChatHisData("127.0.0.1", selfName, msgStr);
-
             return true;
 
         });
         chat_input.setAttachmentsListener(() -> {
-//            filePickIntent("Image");
             checkAndRequirePerms(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE
                     , Manifest.permission.READ_EXTERNAL_STORAGE});
 
@@ -202,6 +200,15 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
 
         adapter = new MessagesListAdapter<>(selfIp, imageLoader);
         adapter.addToEnd(msgList, false);
+        adapter.enableSelectionMode(this);
+//        adapter.setOnMessageViewClickListener(R.id.messageUserAvatar,
+//                new MessagesListAdapter.OnMessageViewClickListener<ChatMessage>() {
+//                    @Override
+//                    public void onMessageViewClick(View view, ChatMessage message) {
+//
+//                    }
+//
+//                });
         msgListView.setAdapter(adapter);
     }
 
@@ -262,7 +269,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.chat_toolbar, menu);
+        onSelectionChanged(0);
+
         return true;
     }
 
@@ -327,26 +337,28 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        checkAndRequirePerms(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE
+                , Manifest.permission.READ_EXTERNAL_STORAGE});
+        if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            return false;
+        }
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
-//            case R.id.send_file:
-//
-//                checkAndRequirePerms(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                        , Manifest.permission.READ_EXTERNAL_STORAGE});
-//                filePickIntent("Image");
-//                PopupMenu popupMenu=new PopupMenu(this,send_button);
-//                MenuInflater inflater=popupMenu.getMenuInflater();
-//                inflater.inflate(R.menu.file_popup,popupMenu.getMenu());
-//                popupMenu.setOnMenuItemClickListener(this);
-//                popupMenu.show();
-//                break;
+
+            case R.id.action_copy:
+                adapter.copySelectedMessagesText(this, getMessageStringFormatter(), true);
+                Toasty.info(this,"已复制").show();
+                break;
             case R.id.clear_msg:
-                adapter.clear();
+                adapter.deleteSelectedMessages();
                 makeTextShort("已清除所有消息");
                 break;
             case R.id.file_browser:
+
                 Intent intent = new Intent(this, FileBrowserActivity.class);
                 startActivityForResult(intent, REQUEST_FILE_BROWSER);
                 break;
@@ -355,12 +367,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
                 Toasty.warning(this, "Image", Toasty.LENGTH_SHORT).show();
                 filePickIntent("Image");
                 break;
-            case R.id.select_audio:
-//                Toasty.warning(this, "Audio", Toasty.LENGTH_SHORT).show();
-//                filePickIntent("Audio");
-                Toasty.error(getApplicationContext(), "有bug,已停用", Toasty.LENGTH_LONG).show();
 
-                break;
             case R.id.select_file:
                 Toasty.warning(this, "File", Toasty.LENGTH_SHORT).show();
                 filePickIntent("File");
@@ -537,47 +544,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
                     String filePath = data.getStringExtra("FilePath");
                     sendFileByPaths(new String[]{filePath}, selfName, selfGroup, receiverIp);
                     break;
-
-//                    tmpPaths = data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS);
-//                    String[] filePathArray = arrayToString(tmpPaths);
-//
-//                    IpMessageProtocol sendPro = new IpMessageProtocol();
-//                    sendPro.setVersion("" + IpMessageConst.VERSION);
-//                    sendPro.setCommandNo(IpMessageConst.IPMSG_SENDMSG | IpMessageConst.IPMSG_FILEATTACHOPT);
-//                    sendPro.setSenderName(selfName);
-//                    sendPro.setSenderHost(selfGroup);
-//                    String msgStr = "";    //发送的消息
-//
-//                    StringBuffer additionInfoSb = new StringBuffer();    //用于组合附加文件格式的sb
-//                    for (String path : filePathArray) {
-//                        File file = new File(path);
-//                        additionInfoSb.append("0:");
-//                        additionInfoSb.append(file.getName() + ":");
-//                        additionInfoSb.append(Long.toHexString(file.length()) + ":");        //文件大小十六进制表示
-//                        additionInfoSb.append(Long.toHexString(file.lastModified()) + ":");    //文件创建时间，现在暂时已最后修改时间替代
-//                        additionInfoSb.append(IpMessageConst.IPMSG_FILE_REGULAR + ":");
-//                        byte[] bt = {0x07};        //用于分隔多个发送文件的字符
-//                        String splitStr = new String(bt);
-//                        additionInfoSb.append(splitStr);
-//                    }
-//
-//                    sendPro.setAdditionalSection(msgStr + "\0" + additionInfoSb.toString() + "\0");
-//
-//                    InetAddress sendto = null;
-//                    try {
-//                        sendto = InetAddress.getByName(receiverIp);
-//                    } catch (UnknownHostException e) {
-//
-//                        Log.e("ChatActivity", "发送地址有误");
-//                    }
-//                    if (sendto != null)
-//                        netThreadHelper.sendUdpData(sendPro.getProtocolString(), sendto, IpMessageConst.PORT);
-//
-//                    //监听2425端口，准备接受TCP连接请求
-//                    Thread netTcpFileSendThread = new Thread(new NetTcpFileSendThread(filePathArray));
-//                    netTcpFileSendThread.start();    //启动线程
-//
-//                    break;
             }
         }
     }
@@ -590,24 +556,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
         return filePathArray;
     }
 
-    @Override
-    public void onMessageClick(IMessage message) {
-        makeTextShort("you click:" + message.getText());
-    }
-
-
-    @Override
-    public void onMessageLongClick(IMessage message) {
-        Log.d(TAG, "message lonf click");
-        String copyText = message.toString();
-        CommonUtils.setClipboard(getApplicationContext(), copyText);
-        globalToast("已复制" + copyText);
-    }
-
-    @Override
-    public void onLoadMore(int page, int totalItemsCount) {
-
-    }
 
     @Override
     public String format(Date date) {
@@ -620,37 +568,6 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
         }
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
-
-//    @Override
-//    public boolean onMenuItemClick(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.select_image:
-//                Toasty.warning(this, "Image", Toasty.LENGTH_SHORT).show();
-//                filePickIntent("Image");
-//                break;
-//            case R.id.select_audio:
-//                Toasty.error(getApplicationContext(), "有bug,已停用", Toasty.LENGTH_LONG).show();
-//
-//                break;
-//            case R.id.select_file:
-//                Toasty.warning(this, "File", Toasty.LENGTH_SHORT).show();
-//                filePickIntent("File");
-//
-//                break;
-//            case R.id.select_vedio:
-//                Toasty.warning(this, "Video", Toasty.LENGTH_SHORT).show();
-//                filePickIntent("Video");
-//
-//                break;
-//            default:
-//                break;
-//        }
-//        return false;
-//    }
 
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
@@ -666,6 +583,38 @@ public class ChatActivity extends BaseActivity implements OnClickListener, Recei
             }
         }
         return super.onMenuOpened(featureId, menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (selectionCount == 0) {
+            super.onBackPressed();
+        } else {
+            adapter.unselectAllItems();
+        }
+    }
+
+    @Override
+    public void onSelectionChanged(int count) {
+        this.selectionCount = count;
+        menu.findItem(R.id.clear_msg).setVisible(count > 0);
+        menu.findItem(R.id.action_copy).setVisible(count > 0);
+    }
+
+    private MessagesListAdapter.Formatter<ChatMessage> getMessageStringFormatter() {
+        return new MessagesListAdapter.Formatter<ChatMessage>() {
+            @Override
+            public String format(ChatMessage message) {
+                String createdAt = new SimpleDateFormat("MMM d, EEE 'at' h:mm a", Locale.getDefault())
+                        .format(message.getCreatedAt());
+
+                String text = message.getText();
+                if (text == null) text = "[attachment]";
+
+                return String.format(Locale.getDefault(), "%s: %s (%s)",
+                        message.getUser().getName(), text, createdAt);
+            }
+        };
     }
 }
 

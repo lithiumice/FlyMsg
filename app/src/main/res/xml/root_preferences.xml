@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="pref_cate_base"
+
     android:title="@string/root_title">
 
 
     <PreferenceCategory android:title="基本设置">
+
         <EditTextPreference
             android:defaultValue="FLYMSG"
             android:icon="@drawable/ic_verified_user_black_24dp"
@@ -30,9 +33,9 @@
             android:dialogTitle="下载位置"
             android:entries="@array/settings_download_preference_titles"
             android:entryValues="@array/settings_list_preference_values"
+            android:icon="@drawable/ic_insert_drive_file_black_24dp"
             android:key="download_pref_list"
             android:negativeButtonText="@null"
-            android:icon="@drawable/ic_insert_drive_file_black_24dp"
             android:positiveButtonText="@null"
             android:summary="/mnt/sdcard/Download"
             android:title="下载位置" />
@@ -48,7 +51,20 @@
             android:icon="@drawable/ic_restaurant_menu_black_24dp"
             android:key="AutoReceive"
             android:title="自动接受文件" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_hourglass_empty_black_24dp"
+            android:key="check_update_when_boost"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="启动检查更新" />
+
+        <online.hualin.flymsg.View.ThemeChoicePreference
+            android:key="theme_change"
+            android:icon="@drawable/ic_settings_ethernet_black_24dp"
+            android:title="改变主题颜色">
+        </online.hualin.flymsg.View.ThemeChoicePreference>
+
     </PreferenceCategory>
-
-
 </PreferenceScreen>

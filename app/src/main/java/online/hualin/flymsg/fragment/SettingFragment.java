@@ -1,13 +1,9 @@
 package online.hualin.flymsg.fragment;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
-import androidx.appcompat.widget.Toolbar;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -17,14 +13,33 @@ import com.google.android.material.snackbar.Snackbar;
 
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
+import online.hualin.flymsg.View.ThemeChoiceFragment;
+import online.hualin.flymsg.View.ThemeChoicePreference;
+import online.hualin.flymsg.activity.SettingsActivity;
 
-public class SettingFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener {
+public class SettingFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener ,SharedPreferences.OnSharedPreferenceChangeListener{
     private final int REQUEST_CODE_ALERT_RINGTONE = 1;
     private final String KEY_RINGTONE_PREFERENCE = "";
+    private int theme;
+    private SharedPreferences sp;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.root_preferences);
+        sp = android.preference.PreferenceManager.getDefaultSharedPreferences(getActivity());
+        theme = sp.getInt("theme_change", R.style.Theme7);
+
+    }
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        DialogFragment fragment;
+        if (preference instanceof ThemeChoicePreference) {
+            fragment = ThemeChoiceFragment.newInstance(preference.getKey());
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getFragmentManager(), null);
+        } else
+            super.onDisplayPreferenceDialog(preference);
     }
 
     @Override
@@ -66,6 +81,35 @@ public class SettingFragment extends PreferenceFragmentCompat implements Prefere
         } else {
             preference.setSummary(stringValue);
         }
+
         return true;
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("theme_change")) {
+            int newTheme = sp.getInt("theme_change", theme);
+            if (newTheme != theme && getActivity() != null) {
+                SettingsActivity settingActivity = (SettingsActivity) getActivity();
+                settingActivity.setTheme(newTheme);
+                settingActivity.setColor();
+                this.onCreate(null);
+            }
+        }
     }
 }

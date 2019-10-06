@@ -33,7 +33,7 @@ public class App extends Application {
     private Handler mHandler;
     private Executor mExecutor;
     private App app;
-    private DaoSession daoSession;
+    private static DaoSession daoSession;
     private ChatHistoryDao chatHistoryDao;
     private AppModule appModule;
     private static SharedPreferences pref;
@@ -94,7 +94,7 @@ public class App extends Application {
         return pref.getString("GroupName","WORKGROUP");
     }
 
-    public DaoSession getDaoSession() {
+    public static DaoSession getDaoSession() {
         return daoSession;
     }
 

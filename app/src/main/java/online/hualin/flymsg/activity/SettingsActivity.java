@@ -14,30 +14,40 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.jaeger.library.StatusBarUtil;
 
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
 import online.hualin.flymsg.fragment.SettingFragment;
+import online.hualin.flymsg.utils.ThemeUtils;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends LiteBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+//        StatusBarUtil.setTransparent(this);
+
         Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.settings, new SettingFragment())
                 .commit();
     }
+    public void setColor(){
+        ThemeUtils.setToolbarColor(this,ThemeUtils.getPrimaryColor(this));
+        ThemeUtils.setWindowStatusBarColor(this,ThemeUtils.getPrimaryDarkColor(this));
 
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return true;
     }
+
 }
