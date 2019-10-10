@@ -17441,7 +17441,7 @@ org.greenrobot.eventbus.EventBus
     public static java.lang.String TAG
 com.bm.library.PhotoView$1
     public void onRotate(float,float,float)
-online.hualin.flymsg.view.OnMoveAndSwipeListener
+online.hualin.flymsg.View.OnMoveAndSwipeListener
     public abstract boolean onItemMove(int,int)
     public abstract void onItemDismiss(int)
 com.google.android.material.bottomsheet.BottomSheetBehavior$BottomSheetCallback
@@ -22603,7 +22603,7 @@ com.google.android.material.navigation.NavigationView$SavedState$1
     public com.google.android.material.navigation.NavigationView$SavedState createFromParcel(android.os.Parcel)
     public com.google.android.material.navigation.NavigationView$SavedState[] newArray(int)
 com.google.gson.internal.bind.TypeAdapters$36
-online.hualin.flymsg.view.ItemTouchHelperCallback
+online.hualin.flymsg.View.ItemTouchHelperCallback
     public void onSwiped(androidx.recyclerview.widget.RecyclerView$ViewHolder,int)
     public final int TYPE_NORMAL
 com.bumptech.glide.load.resource.bitmap.DrawableToBitmapConverter

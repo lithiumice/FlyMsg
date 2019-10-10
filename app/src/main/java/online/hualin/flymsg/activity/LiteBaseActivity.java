@@ -2,9 +2,9 @@ package online.hualin.flymsg.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import online.hualin.flymsg.R;
 
@@ -21,7 +21,7 @@ public class LiteBaseActivity extends AppCompatActivity {
 
     private void onPreCreate() {
         sp= PreferenceManager.getDefaultSharedPreferences(this);
-        theme=sp.getInt("theme_change", R.style.Theme7);
+        theme=sp.getInt("theme_change", R.style.Theme19);
         setTheme(theme);
 
     }

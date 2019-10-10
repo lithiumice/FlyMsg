@@ -5,5 +5,5 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:text="HEADER"
-    android:textColor="@color/colorPrimary"
+    android:textColor="?attr/colorPrimary"
     android:textSize="14sp" />

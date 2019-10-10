@@ -27,7 +27,6 @@ public class SettingsActivity extends LiteBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-//        StatusBarUtil.setTransparent(this);
 
         Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/clear_msg"
+    <item
+        android:id="@+id/clear_msg"
         android:icon="@drawable/ic_delete"
         android:title="clear"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_copy"
         android:icon="@drawable/ic_content_copy_black_24dp"
         android:title="copy"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
 
-    <item android:id="@+id/select_image"
+    <item
+        android:id="@+id/select_image"
         android:icon="@drawable/ic_image"
         android:title="Image"
-        app:showAsAction="never"
-        />
-    <item android:id="@+id/select_vedio"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/select_vedio"
         android:icon="@drawable/ic_camera_black_24dp"
-        app:showAsAction="never"
+        android:title="Video"
 
-        android:title="Video"/>
-    <item android:id="@+id/select_audio"
-        app:showAsAction="never"
-android:icon="@drawable/ic_audiotrack_black_24dp"
-        android:title="Audio"/>
-    <item android:id="@+id/select_file"
-        app:showAsAction="never"
-android:icon="@drawable/ic_insert_drive_file_black_24dp"
-        android:title="NormalFile"/>
-    <item android:id="@+id/file_browser"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/select_file"
+        android:icon="@drawable/ic_insert_drive_file_black_24dp"
+        android:title="NormalFile"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/file_browser"
         android:icon="@drawable/ic_link_black_24dp"
         android:title="FileBrowser"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 </menu>

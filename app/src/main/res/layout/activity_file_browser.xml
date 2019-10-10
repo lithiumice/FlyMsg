@@ -16,7 +16,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginBottom="16dp"
             android:background="?attr/colorPrimary"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -103,8 +102,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:layout_gravity="center_vertical"
-                android:id="@+id/save_rem_path"
-                android:text="保存"
+                android:id="@+id/sort_path"
+                android:text="排序"
                 />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

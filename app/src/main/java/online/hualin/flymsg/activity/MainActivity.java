@@ -1,7 +1,6 @@
 package online.hualin.flymsg.activity;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,13 +21,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
@@ -60,6 +57,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
+import online.hualin.flymsg.View.PoetryPupop;
 import online.hualin.flymsg.adapter.MainContentAdapter;
 import online.hualin.flymsg.data.ChatMessage;
 import online.hualin.flymsg.data.PoetryGson;
@@ -91,6 +89,8 @@ public class MainActivity extends BaseActivity implements OnClickListener
     private String[] tabTitiles = new String[]{"设备", "历史"};
     private int[] pics = {R.drawable.ic_devices_black_24dp, R.drawable.ic_history_white_24dp};
     private ProgressBar progressBar;
+    private PoetryGson poetryGson;
+    private String poetryText;
     private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -166,7 +166,8 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
         if (!isWifiActive()) {    //若wifi没有打开，提示
             Snackbar.make(getWindow().getDecorView(), "没有WiFi连接", Snackbar.LENGTH_LONG)
-                    .setAction("OK", v->{}).show();
+                    .setAction("OK", v -> {
+                    }).show();
         }
 
         iniNet();
@@ -174,6 +175,11 @@ public class MainActivity extends BaseActivity implements OnClickListener
         initNav();
         initTab();
 
+    }
+
+    @Subscribe
+    private void setPoetryGson(PoetryGson poetryGson){
+        this.poetryGson=poetryGson;
     }
 
     public void checkAndRequirePerms(String[] permList) {
@@ -189,9 +195,9 @@ public class MainActivity extends BaseActivity implements OnClickListener
         switch (requestCode) {
             case REQUEST_PERMS:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toasty.error(getApplicationContext(),"已打开权限",Toasty.LENGTH_SHORT).show();
+                    Toasty.error(getApplicationContext(), "已打开权限", Toasty.LENGTH_SHORT).show();
                 } else {
-                    Toasty.error(getApplicationContext(),"为正常使用你需要打开必须的权限",Toasty.LENGTH_SHORT).show();
+                    Toasty.error(getApplicationContext(), "为正常使用你需要打开必须的权限", Toasty.LENGTH_SHORT).show();
 //                    finish();
                 }
                 break;
@@ -253,6 +259,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
         mainTitle = findViewById(R.id.main_titile);
         poetryTitle = findViewById(R.id.poetry_title);
+        poetryTitle.setOnClickListener(this);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -374,17 +381,18 @@ public class MainActivity extends BaseActivity implements OnClickListener
                     poetryOne.setContent(poetryGson.getContent());
                     poetryDao.insert(poetryOne);
 
-                    String poetry = poetryGson.getContent();
-                    Log.d(TAG, poetry);
+                    poetryText = poetryGson.getContent();
+                    Log.d(TAG, poetryText);
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            poetryTitle.setText(poetry);
+                            poetryTitle.setText(poetryText);
 
+//                            EventBus.getDefault().post(poetryGson);
                         }
                     });
-                    pref.edit().putString("poetry", poetry).apply();
+                    pref.edit().putString("poetry", poetryText).apply();
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -534,7 +542,14 @@ public class MainActivity extends BaseActivity implements OnClickListener
                     Toasty.warning(getApplicationContext(), "已打开通知音", Toasty.LENGTH_SHORT).show();
 
                 }
+                break;
+
+            case R.id.poetry_title:
+                new PoetryPupop(getApplicationContext(),poetryGson)
+//                        .setBlurBackgroundEnable(true)
+                        .showPopupWindow();
         }
+
     }
 
     @Override

@@ -25,11 +25,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             >
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/intro_2"
-                />
+<!--            <ImageView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@drawable/intro_2"-->
+<!--                />-->
             <com.stfalcon.chatkit.messages.MessagesList
                 android:id="@+id/messagesList"
                 android:layout_width="match_parent"
@@ -47,8 +47,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:fitsSystemWindows="true"
-            app:inputHint="type"
+            app:inputHint="send a message"
 
+            app:attachmentButtonIcon="@drawable/ic_add_attachment"
+            app:attachmentButtonDefaultIconColor="?attr/colorPrimary"
             app:inputTextSize="15sp"
             app:showAttachmentButton="true" />
 

@@ -63,8 +63,12 @@ public class ThemeChoicePreference extends DialogPreference implements  DialogPr
         mTheme = mSp.getInt("theme_change", R.style.Theme7);
     }
 
-//
-//    @Override
+    @Override
+    public int getDialogLayoutResource() {
+        return R.layout.preference_theme_change;
+    }
+
+    //    @Override
 //    protected void onSetInitialValue(Object defaultValue) {
 //
 //        // Set default state from the XML attribute
@@ -91,6 +95,8 @@ public class ThemeChoicePreference extends DialogPreference implements  DialogPr
     public void showSummary() {
 //        setSummary(mCurrentValue);
     }
+
+
 
     public void setValue(int value){
         persistInt(value);

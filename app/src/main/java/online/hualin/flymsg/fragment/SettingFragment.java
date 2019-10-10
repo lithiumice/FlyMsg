@@ -48,6 +48,7 @@ public class SettingFragment extends PreferenceFragmentCompat implements Prefere
         findPreference("switch_notify").setOnPreferenceChangeListener(this);
         findPreference("AutoReceive").setOnPreferenceChangeListener(this);
         findPreference("download_pref_list").setOnPreferenceChangeListener(this);
+        findPreference("theme_change").setOnPreferenceChangeListener(this);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         onPreferenceChange(findPreference("switch_notify"), preferences.getBoolean("switch_notify", true));

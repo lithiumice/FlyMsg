@@ -29,7 +29,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.speedystone.greendaodemo.db.ChatHistoryDao;
 import com.speedystone.greendaodemo.db.DaoSession;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import online.hualin.flymsg.App;
@@ -38,7 +37,7 @@ import online.hualin.flymsg.adapter.ChatHisAdapter;
 import online.hualin.flymsg.db.ChatHistory;
 import online.hualin.flymsg.utils.CommonUtils;
 import online.hualin.flymsg.utils.ViewUtils;
-import online.hualin.flymsg.view.ItemTouchHelperCallback;
+import online.hualin.flymsg.View.ItemTouchHelperCallback;
 
 import static online.hualin.flymsg.App.getApplication;
 

@@ -62,8 +62,9 @@
 
         <online.hualin.flymsg.View.ThemeChoicePreference
             android:key="theme_change"
-            android:icon="@drawable/ic_settings_ethernet_black_24dp"
-            android:title="改变主题颜色">
+            android:icon="@drawable/ic_camera_black_24dp"
+            android:title="主题更换"
+            >
         </online.hualin.flymsg.View.ThemeChoicePreference>
 
     </PreferenceCategory>

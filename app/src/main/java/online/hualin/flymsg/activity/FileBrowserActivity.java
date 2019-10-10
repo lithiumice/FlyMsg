@@ -4,15 +4,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,7 +26,10 @@ import java.util.ArrayList;
 
 import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
+import online.hualin.flymsg.View.FileBrowsePopup;
 import online.hualin.flymsg.adapter.FileBrowseAdapter;
+import razerdp.basepopup.QuickPopupBuilder;
+import razerdp.basepopup.QuickPopupConfig;
 
 public class FileBrowserActivity extends LiteBaseActivity implements View.OnClickListener {
 
@@ -46,13 +50,20 @@ public class FileBrowserActivity extends LiteBaseActivity implements View.OnClic
         setContentView(R.layout.activity_file_browser);
         Toolbar toolbar = findViewById(R.id.toolbar);
         checkBox = findViewById(R.id.is_remmember_path);
+        checkBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                pref.edit().putBoolean("RemmemberPath", checkBox.isChecked()).apply();
+
+            }
+        });
 //        setToolbar(toolbar, 1);
         pref = App.getPref();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Button saveButton = findViewById(R.id.save_rem_path);
+        Button saveButton = findViewById(R.id.sort_path);
         saveButton.setOnClickListener(this);
         Button doneButton = findViewById(R.id.done_button);
         doneButton.setOnClickListener(new View.OnClickListener() {
@@ -191,19 +202,34 @@ public class FileBrowserActivity extends LiteBaseActivity implements View.OnClic
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()==android.R.id.home){
-            String f=(String) paths.get(1);
-            if (new File(f).canRead())
+        if (item.getItemId() == android.R.id.home) {
+            if (targets.get(1).equals("../")) {
+                String f = paths.get(1);
                 showDir(f);
+            }
+            else
+                finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.save_rem_path) {
-            pref.edit().putBoolean("RemmemberPath", checkBox.isChecked()).apply();
+        if (v.getId() == R.id.sort_path) {
+//            pref.edit().putBoolean("RemmemberPath", checkBox.isChecked()).apply();
 
+//            new FileBrowsePopup(getBaseContext()).showPopupWindow(v);
+            QuickPopupBuilder.with(getApplicationContext())
+                    .contentView(R.layout.file_browser_popup)
+                    .config(new QuickPopupConfig()
+                    .gravity(Gravity.TOP)
+                    .withClick(R.id.sort_alphabet_acs, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pref.edit().putString("FileBrowseSort","acs").apply();
+                        }
+                    }))
+                    .show(v);
         }
     }
 }

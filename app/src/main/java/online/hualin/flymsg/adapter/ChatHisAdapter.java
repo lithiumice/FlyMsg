@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -31,7 +30,7 @@ import online.hualin.flymsg.App;
 import online.hualin.flymsg.R;
 import online.hualin.flymsg.anim.ScaleInAnimation;
 import online.hualin.flymsg.db.ChatHistory;
-import online.hualin.flymsg.view.OnMoveAndSwipeListener;
+import online.hualin.flymsg.View.OnMoveAndSwipeListener;
 
 import static online.hualin.flymsg.App.getApplication;
 import static online.hualin.flymsg.utils.CommonUtils.setClipboard;

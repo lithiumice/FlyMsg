@@ -364,17 +364,14 @@ public class ChatActivity extends BaseActivity implements ReceiveMsgListener
                 break;
 
             case R.id.select_image:
-                Toasty.warning(this, "Image", Toasty.LENGTH_SHORT).show();
                 filePickIntent("Image");
                 break;
 
             case R.id.select_file:
-                Toasty.warning(this, "File", Toasty.LENGTH_SHORT).show();
                 filePickIntent("File");
 
                 break;
             case R.id.select_vedio:
-                Toasty.warning(this, "Video", Toasty.LENGTH_SHORT).show();
                 filePickIntent("Video");
 
                 break;
