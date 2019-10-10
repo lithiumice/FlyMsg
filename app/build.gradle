@@ -18,18 +18,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    signingConfigs{
-        config{
-            storeFile file('/home/lithium/Downloads/lithiumice.keystore')
-            storePassword '135hualin'
-            keyAlias 'lithiumice.keystore'
-            keyPassword '135hualin'
+    signingConfigs {
+        config {
+            storeFile file(KEY_PATH)
+            storePassword KEY_PASS
+            keyAlias ALIAS_NAME
+            keyPassword ALIAS_PASS
         }
         debug {
-            storeFile file('/home/lithium/Downloads/lithiumice.keystore')
-            storePassword '135hualin'
-            keyAlias = 'lithiumice.keystore'
-            keyPassword '135hualin'
         }
     }
     buildTypes {
@@ -42,7 +38,32 @@ android {
         }
     }
 
+
+    flavorDimensions "default","api"
+    productFlavors {
+        coolapk {
+            applicationId "online.hualin.flymsg"
+            dimension "default"
+        }
+        uc {
+            applicationId "online.hualin.flymsg.uc"
+            dimension "default"
+        }
+        minApi24 {
+            dimension "api"
+            minSdkVersion '24'
+            // To ensure the target device receives the version of the app with
+            // the highest compatible API level, assign version codes in increasing
+            // value with API level. To learn more about assigning version codes to
+            // support app updates and uploading to Google Play, read Multiple APK Support
+            versionCode 30000 + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi24"
+        }
+    }
+
 }
+
+
 greendao {
     schemaVersion 4 //数据库版本号
     daoPackage 'com.speedystone.greendaodemo.db'// 设置DaoMaster、DaoSession、Dao 包名

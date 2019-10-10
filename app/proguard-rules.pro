@@ -19,22 +19,26 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# general
 -dontusemixedcaseclassnames
 -keepattributes *Annotation*
 -keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends android.database.sqlite.SQLiteOpenHelper{*;}
-
 -verbose
-#apk 包内所有 class 的内部结构
--dump class_files.txt
-#未混淆的类和成员
--printseeds seeds.txt
-#列出从 apk 中删除的代码
--printusage unused.txt
-#混淆前后的映射
--printmapping mapping.txt
 
+
+##apk 包内所有 class 的内部结构
+#-dump class_files.txt
+##未混淆的类和成员
+#-printseeds seeds.txt
+##列出从 apk 中删除的代码
+#-printusage unused.txt
+##混淆前后的映射
+#-printmapping mapping.txt
+
+# greendao
 -dontwarn org.greenrobot.greendao.database.**
 -keep class org.greenrobot.greendao.**{*;}
 -keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
@@ -42,6 +46,7 @@ public static java.lang.String TABLENAME;
 }
 -keep class **$Properties
 
+# eventbus
 -keepattributes *Annotation*
 -keepclassmembers class ** {
 @org.greenrobot.eventbus.Subscribe <methods>;
