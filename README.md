@@ -13,6 +13,9 @@ Flymsg(飞笺)是一个类飞鸽传书的局域网传输软件,具有即时通�
 4.功能更完善.随意选择设备的文件,完整的下载进度提示,聊天界面交互与自由操作搜索聊天数据等等. \
 5.更多的功能等待更新
 
+## 下载
+[https://raw.githubusercontent.com/lithiumice/FlyMsg/master/release/flymsg.apk]点此下载已编译安装包 
+
 ## 截图
 <img src="./screenshot/main.jpg" width="250" height="500">
 <img src="./screenshot/his.jpg" width="250" height="500">
