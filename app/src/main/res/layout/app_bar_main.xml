@@ -27,14 +27,31 @@
 
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-
-        android:id="@+id/fab_main"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_delete"
-        android:visibility="visible"
-        android:foregroundTint="@color/white"/>
+        android:orientation="vertical">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+            android:id="@+id/fab_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="6dp"
+            android:src="@drawable/ic_search"
+            android:visibility="gone"
+            android:foregroundTint="@color/white"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/fab_main"
+            android:src="@drawable/ic_delete"
+            android:visibility="gone"
+            android:layout_margin="6dp"
+
+            android:foregroundTint="@color/white"/>
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -24,6 +24,15 @@
             android:singleLine="true"
             android:summary="该设置需要重启软件才能生效"
             android:title="组名" />
+
+        <online.hualin.flymsg.View.ThemeChoicePreference
+            android:key="theme_change"
+            android:icon="@drawable/ic_camera_black_24dp"
+            android:title="主题更换"
+            android:summary="color"
+            >
+        </online.hualin.flymsg.View.ThemeChoicePreference>
+
     </PreferenceCategory>
 
 
@@ -52,20 +61,14 @@
             android:key="AutoReceive"
             android:title="自动接受文件" />
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:icon="@drawable/ic_hourglass_empty_black_24dp"
-            android:key="check_update_when_boost"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="启动检查更新" />
+<!--        <CheckBoxPreference-->
+<!--            android:defaultValue="true"-->
+<!--            android:icon="@drawable/ic_hourglass_empty_black_24dp"-->
+<!--            android:key="check_update_when_boost"-->
+<!--            android:selectAllOnFocus="true"-->
+<!--            android:singleLine="true"-->
+<!--            android:title="启动检查更新" />-->
 
-        <online.hualin.flymsg.View.ThemeChoicePreference
-            android:key="theme_change"
-            android:icon="@drawable/ic_camera_black_24dp"
-            android:title="主题更换"
-            >
-        </online.hualin.flymsg.View.ThemeChoicePreference>
 
     </PreferenceCategory>
 </PreferenceScreen>

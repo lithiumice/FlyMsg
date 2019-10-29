@@ -6,48 +6,82 @@
     android:layout_gravity="center"
     app:strokeColor="@color/gray"
     app:strokeWidth="1dp"
-    android:background="@color/white60">
-
+    android:background="?android:selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:background="?android:selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/poetry_prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_weight="0"
+
+            android:layout_gravity="center_vertical"
+
+            android:src="@drawable/ic_chevron_left_black_24dp"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/poetry_popup_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="7dp"
+                    android:text="title"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/poetry_popup_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="author"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimaryDark"
+                />
 
             <TextView
-                android:id="@+id/poetry_popup_title"
+                android:id="@+id/poetry_popup_content"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="7dp"
-                android:text="title"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/poetry_popup_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="author"
-                android:textSize="14sp" />
-
+                android:text="content"
+                android:textSize="17sp" />
         </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimaryDark"
-            />
 
-        <TextView
-            android:id="@+id/poetry_popup_content"
-
+        <ImageView
+            android:background="?android:selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:id="@+id/poetry_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="7dp"
-            android:text="content"
-            android:textSize="17sp" />
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0"
+
+            android:src="@drawable/ic_chevron_right_black_24dp"/>
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

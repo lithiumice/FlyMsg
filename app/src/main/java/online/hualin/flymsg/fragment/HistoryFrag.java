@@ -72,6 +72,7 @@ public class HistoryFrag extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private DaoSession daoSession = ((App) getApplication()).getDaoSession();
     private FloatingActionButton fab;
+    private FloatingActionButton fab_search;
     private SearchView searchView;
     private ChatHistoryDao chatHistoryDao;
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
@@ -174,6 +175,14 @@ public class HistoryFrag extends Fragment {
 
         context = getActivity();
         fab = getActivity().findViewById(R.id.fab_main);
+        fab_search = getActivity().findViewById(R.id.fab_search);
+        fab_search.setOnClickListener(v->{
+            if (searchView.getVisibility()==View.GONE){
+                searchView.setVisibility(View.VISIBLE);
+            }else{
+                searchView.setVisibility(View.GONE);
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -26,6 +26,10 @@ android {
             keyPassword ALIAS_PASS
         }
         debug {
+            storeFile file(KEY_PATH)
+            storePassword KEY_PASS
+            keyAlias ALIAS_NAME
+            keyPassword ALIAS_PASS
         }
     }
     buildTypes {
@@ -39,27 +43,19 @@ android {
     }
 
 
-    flavorDimensions "default","api"
-    productFlavors {
-        coolapk {
-            applicationId "online.hualin.flymsg"
-            dimension "default"
-        }
-        uc {
-            applicationId "online.hualin.flymsg.uc"
-            dimension "default"
-        }
-        minApi24 {
-            dimension "api"
-            minSdkVersion '24'
-            // To ensure the target device receives the version of the app with
-            // the highest compatible API level, assign version codes in increasing
-            // value with API level. To learn more about assigning version codes to
-            // support app updates and uploading to Google Play, read Multiple APK Support
-            versionCode 30000 + android.defaultConfig.versionCode
-            versionNameSuffix "-minApi24"
-        }
-    }
+//    flavorDimensions "default","api"
+//    productFlavors {
+//        coolapk {
+//            applicationId "online.hualin.flymsg"
+//            dimension "default"
+//        }
+//        minApi24 {
+//            dimension "api"
+//            minSdkVersion '24'
+//            versionCode 30000 + android.defaultConfig.versionCode
+//            versionNameSuffix "-minApi24"
+//        }
+//    }
 
 }
 

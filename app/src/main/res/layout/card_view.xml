@@ -47,7 +47,7 @@
                 android:layout_height="25dp"
                 android:layout_marginBottom="14dp"
                 android:src="@drawable/shape_circle"
-                android:tint="@color/green"
+                android:tint="?attr/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:layout_editor_absoluteX="375dp">
 

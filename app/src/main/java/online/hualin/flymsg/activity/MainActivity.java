@@ -1,6 +1,7 @@
 package online.hualin.flymsg.activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -79,6 +81,7 @@ public class MainActivity extends BaseActivity implements OnClickListener
     private MainContentAdapter pagerAdapter;
     private Toolbar toolbar;
     private FloatingActionButton fab;
+    private FloatingActionButton fab_search;
     private SearchView searchView;
     private DrawerLayout mDrawerLayout;
     private NavigationView navView;
@@ -96,8 +99,10 @@ public class MainActivity extends BaseActivity implements OnClickListener
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             if (position == 1) {
                 fab.show();
+                fab_search.show();
             } else {
                 fab.hide();
+                fab_search.hide();
             }
         }
 
@@ -105,8 +110,12 @@ public class MainActivity extends BaseActivity implements OnClickListener
         public void onPageSelected(int position) {
             if (position == 1) {
                 fab.show();
+                fab_search.show();
+
             } else {
                 fab.hide();
+                fab_search.hide();
+
             }
         }
 
@@ -133,27 +142,37 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
         boolean isFirstLogin = pref.getBoolean("FirstUse", true);
         if (isFirstLogin) {
-            editor = pref.edit();
-            editor.putBoolean("FirstUse", false);
-            editor.putString("DeviceName", android.os.Build.DEVICE);
-            editor.putString("DeviceGroup", "WORKGROUP");
-            editor.apply();
+            new AlertDialog.Builder(this)
+                    .setTitle("服务条款")
+                    .setMessage(R.string.service_policy)
+                    .setNegativeButton("拒绝",(dialog,which)->{
+                        finish();
+                    })
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            checkedFirst();
+                            checkAndRequirePerms(new String[]{Manifest.permission_group.STORAGE});
+                            dialog.cancel();
+                        }
+                    }).create().show();
 
-            checkAndRequirePerms(new String[]{Manifest.permission_group.STORAGE});
+            new AlertDialog.Builder(this)
+                    .setTitle("隐私政策")
+                    .setMessage(R.string.private_policy)
+                    .setNegativeButton("拒绝",(dialog,which)->{
+                        finish();
+                    })
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }).create().show();
+
 
         }
 
-//            new AlertDialog.Builder(this)
-//                    .setTitle("提示")
-//                    .setMessage("请在关于页面获取更多消息")
-//                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                        }
-//                    }).create().show();
-//        }
-//
 //        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 //                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
 //        {
@@ -164,11 +183,11 @@ public class MainActivity extends BaseActivity implements OnClickListener
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        if (!isWifiActive()) {    //若wifi没有打开，提示
-            Snackbar.make(getWindow().getDecorView(), "没有WiFi连接", Snackbar.LENGTH_LONG)
-                    .setAction("OK", v -> {
-                    }).show();
-        }
+//        if (!isWifiActive()) {    //若wifi没有打开，提示
+//            Snackbar.make(getWindow().getDecorView(), "没有WiFi连接", Snackbar.LENGTH_LONG)
+//                    .setAction("OK", v -> {
+//                    }).show();
+//        }
 
         iniNet();
         initView();
@@ -177,6 +196,15 @@ public class MainActivity extends BaseActivity implements OnClickListener
 
     }
 
+    private void checkedFirst(){
+
+        editor = pref.edit();
+        editor.putBoolean("FirstUse", false);
+        editor.putString("DeviceName", android.os.Build.DEVICE);
+        editor.putString("DeviceGroup", "WORKGROUP");
+        editor.apply();
+
+    }
     @Subscribe
     private void setPoetryGson(PoetryGson poetryGson){
         this.poetryGson=poetryGson;
@@ -252,7 +280,9 @@ public class MainActivity extends BaseActivity implements OnClickListener
     private void initView() {
         hostIp = getLocalIpAddress();
         fab = findViewById(R.id.fab_main);
+        fab_search = findViewById(R.id.fab_search);
         fab.hide();
+        fab_search.hide();
 
         toolbar = findViewById(R.id.toolbar);
         setToolbar(toolbar, 0);
